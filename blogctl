@@ -1,0 +1,96 @@
+#!/usr/bin/env ruby
+require 'xmlrpc/client'
+
+def run
+  args = $*
+  if args.size < 6 or args[0] != 'dump'
+    syntax_str =<<-eos
+  Syntax: blogctl dump host xmlrpc_path login password dump_path
+  dump            command to dump all blog entries from a blog to a specified 
+                  local directory
+  host            the blog host address (ex: myblog.com)
+  xmlrpc_path     the path to your blog's XMLRPC service (currently only 
+                  metaWeblog)
+  login           the login to your blog
+  password        the password to your blog
+  dump_path       the path on your local computer that you want to dump the blog 
+                  entries to
+    eos
+    puts syntax_str
+    return
+  end
+
+  host = args[1]
+  xmlrpc_path = args[2]
+  login = args[3]
+  password = args[4]
+  dump_path = args[5]
+  port = 80
+  blog_id = 1
+  
+  client = XMLRPC::Client.new(host, xmlrpc_path, port)
+  blog = Blog.new(client, blog_id, login, password)
+  
+  most_recent_post = blog.recent_posts(1)[0]
+  most_recent_post_id = most_recent_post['postid'].to_i
+  
+  all_posts = blog.recent_posts(most_recent_post_id + 1)
+  all_posts.each do |post|
+    dump(host, dump_path, post)
+  end
+end
+
+def dump(blog_name, path, post)
+  file_name = post["postid"] + "_" + post["link"]
+  file_path = path + "/#{file_name}"
+  File.open(file_path, "w") do |f|
+    PostWriter.write(f, blog_name, post)
+  end    
+end
+
+class PostWriter
+  def self.write(io, blog_name, post)
+    self.new(io, blog_name).write(post)
+  end
+  
+  def initialize(io, blog_name)
+    @io = io
+    @blog_name = blog_name
+  end
+  
+  def write(post)
+    write_line "Type: Blog Post (HTML)"
+    write_line "Blog: #{@blog_name}"
+    write_line "Link: #{post["link"]}"
+    write_line "Post: #{post["postid"]}"
+    write_line "Title: #{post["title"]}"
+    write_line "Keywords: #{post["mt_keywords"]}"
+    write_line "Format: none"
+    write_line "Date: #{post["dateCreated"].to_time.strftime("%Y-%m-%d %H:%M:%S")}"
+    write_line "Pings: Off"
+    write_line "Comments: On"
+    write_line
+    write_line post["description"]    
+  end
+  
+  private
+  
+  def write_line(string='')
+    @io.write(string + "\n")
+  end
+end
+
+class Blog
+  def initialize(client, blog_id, login, password)
+    @client = client
+    @blog_id = blog_id
+    @login = login
+    @password = password
+  end
+  
+  def recent_posts(count)
+    @client.call('metaWeblog.getRecentPosts', @blog_id, @login, @password, count)
+  end
+end
+
+run
