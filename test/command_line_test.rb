@@ -3,59 +3,47 @@ require File.join(File.dirname(__FILE__), '/../lib/command_line')
 
 class CommandLineTest < Test::Unit::TestCase
   def test_parse_extracts_command
-    CommandLine.parse(arguments.with(0 => 'dump')) do |p|
-      assert_equal 'dump', p.command
-    end
+    p = CommandLine.parse(arguments.with(0 => 'dump'))
+    assert_equal 'dump', p.command
   end
 
   def test_parse_extracts_host
-    CommandLine.parse(arguments.with(1 => 'kinderman.net')) do |p|
-      assert_equal 'kinderman.net', p.host
-    end
+    p = CommandLine.parse(arguments.with(1 => 'kinderman.net'))
+    assert_equal 'kinderman.net', p.host
   end
 
   def test_parse_extracts_xmlrpc_path
-    CommandLine.parse(arguments.with(2 => '/backend/xmlrpc')) do |p|
-      assert_equal '/backend/xmlrpc', p.xmlrpc_path
-    end
+    p = CommandLine.parse(arguments.with(2 => '/backend/xmlrpc'))
+    assert_equal '/backend/xmlrpc', p.xmlrpc_path
   end
 
   def test_parse_extracts_login
-    CommandLine.parse(arguments.with(3 => 'someuser')) do |p|
-      assert_equal 'someuser', p.login
-    end
+    p = CommandLine.parse(arguments.with(3 => 'someuser'))
+    assert_equal 'someuser', p.login
   end
 
   def test_parse_extracts_password
-    CommandLine.parse(arguments.with(4 => 'somepassword')) do |p|
-      assert_equal 'somepassword', p.password
-    end
+    p = CommandLine.parse(arguments.with(4 => 'somepassword'))
+    assert_equal 'somepassword', p.password
   end
   
   def test_parse_extracts_post_path
-    CommandLine.parse(arguments.with(5 => '/post/path')) do |p|
-      assert_equal '/post/path', p.post_path
-    end
+    p = CommandLine.parse(arguments.with(5 => '/post/path'))
+    assert_equal '/post/path', p.post_path
   end
   
   def test_parse_with_too_few_arguments
     called = false
     assert_raise StandardError do 
-      CommandLine.parse(arguments[0..arguments.size-2]) do |p|
-        called = true
-      end
+      CommandLine.parse(arguments[0..arguments.size-2])
     end
-    assert !called, "Expected command line parsing to halt on too few arguments, but the process was completed instead."
   end
 
   def test_parse_with_too_many_arguments
     called = false
     assert_raise StandardError do 
-      CommandLine.parse(arguments.push('another argument')) do |p|
-        called = true
-      end
+      CommandLine.parse(arguments.push('another argument'))
     end
-    assert !called, "Expected command line parsing to halt on too many arguments, but the process was completed instead."
   end
   
   def test_syntax

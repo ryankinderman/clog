@@ -22,7 +22,7 @@ class CommandLine
         :post_path => args[5]
       }
       cmdline_params = CommandLineParameters.new
-      yield cmdline_params.merge(hash)
+      cmdline_params.merge(hash)
     end
     
     def syntax
