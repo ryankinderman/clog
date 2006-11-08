@@ -11,6 +11,7 @@ def run
   rescue StandardError => e
     puts e.message
     puts CommandLine.syntax
+    return
   end
 
   port = 80
@@ -20,7 +21,8 @@ def run
   blog = Blog.new(client, blog_id, p.login, p.password)
   
   blog.all_posts.each do |post|
-    dump(host, dump_path, post)
+    p post
+    dump(p.host, p.post_path, post)
   end
 end
 
