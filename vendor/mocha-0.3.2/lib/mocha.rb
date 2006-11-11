@@ -1,3 +1,4 @@
+require 'test/unit'
 require 'smart_test_case'
 require 'mocha/auto_verify'
 require 'shared/backtracefilter'

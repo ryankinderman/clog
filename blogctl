@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require File.join(File.dirname(__FILE__), '../config/environment')
+require File.join(File.dirname(__FILE__), 'config/environment')
 require 'xmlrpc/client'
 
 def run
@@ -18,7 +18,6 @@ def run
   blog = Blog.new(client, blog_id, p.login, p.password)
   
   blog.all_posts.each do |post|
-    p post
     dump(p.host, p.post_path, post)
   end
 end
