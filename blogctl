@@ -1,9 +1,6 @@
 #!/usr/bin/env ruby
+require File.join(File.dirname(__FILE__), '../config/environment')
 require 'xmlrpc/client'
-Dir[File.join(File.dirname(__FILE__), 'lib/**/*.rb')].each { |file| load file }
-# require File.join(File.dirname(__FILE__), 'lib/post_writer')
-# require File.join(File.dirname(__FILE__), 'lib/blog')
-# require File.
 
 def run
   begin
