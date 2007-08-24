@@ -1,4 +1,6 @@
 # require File.join(File.dirname(__FILE__), 'config/environment')
+$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
+
 require 'xmlrpc/client'
 
 def run
