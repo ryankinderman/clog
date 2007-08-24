@@ -2,8 +2,8 @@ require File.join(File.dirname(__FILE__), 'test_helper')
 
 class CommandLineTest < Test::Unit::TestCase
   def test_parse_extracts_command
-    p = CommandLine.parse(arguments.with(0 => 'dump'))
-    assert_equal 'dump', p.command
+    p = CommandLine.parse(arguments.with(0 => 'pull'))
+    assert_equal 'pull', p.command
   end
 
   def test_parse_extracts_host
@@ -66,7 +66,7 @@ post_path       the path on your local computer that you want to write the blog
   private
   
   def arguments
-    a = ['dump', 'kinderman.net', '/backend/xmlrpc', 'someuser', 'somepassword', '/post/path']
+    a = ['pull', 'kinderman.net', '/backend/xmlrpc', 'someuser', 'somepassword', '/post/path']
     class << a
       def with(params)
         params.keys.each do |index|
