@@ -1,6 +1,5 @@
-# require File.join(File.dirname(__FILE__), 'config/environment')
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
-
+#!/usr/bin/env ruby
+require File.expand_path(File.dirname(__FILE__) + "/../init")
 require 'xmlrpc/client'
 
 def run

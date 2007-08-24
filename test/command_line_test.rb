@@ -1,5 +1,4 @@
-require 'test/unit'
-require File.join(File.dirname(__FILE__), '/../lib/command_line')
+require File.join(File.dirname(__FILE__), 'test_helper')
 
 class CommandLineTest < Test::Unit::TestCase
   def test_parse_extracts_command

@@ -1,4 +1,7 @@
-require File.join(File.dirname(__FILE__), '../config/environment')
+require File.expand_path(File.dirname(__FILE__) + '/../init')
+
 require 'test/unit'
 
-# Dir[File.join(File.dirname(__FILE__), 'mocks/**/*.rb')].each { |file| load file }
+$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/../vendor/mocha-0.3.2/lib"))
+require 'mocha'
+require 'stubba'
