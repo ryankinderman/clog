@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../init")
 require 'xmlrpc/client'
 
 def dump(blog_name, path, post)
-  file_name = post["postid"] + "_" + post["link"]
+  file_name = post["postid"] + "_" + post["link"].match(/\/([^\/]+)$/)[1]
   file_path = path + "/#{file_name}"
   File.open(file_path, "w") do |f|
     PostWriter.write(f, blog_name, post)
