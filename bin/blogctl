@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require File.expand_path(File.dirname(__FILE__) + "/../init")
-require 'xmlrpc/client'
 
 def dump(blog_name, path, post)
   file_name = post["postid"] + "_" + post["link"].match(/\/([^\/]+)$/)[1]
@@ -19,11 +18,7 @@ def run
     return
   end
 
-  port = 80
-  blog_id = 1
-  
-  client = XMLRPC::Client.new(p.host, p.xmlrpc_path, port)
-  blog = Blog.new(client, blog_id, p.login, p.password)
+  blog = Blog.new(p)
   
   blog.all_posts.each do |post|
     dump(p.host, p.post_path, post)

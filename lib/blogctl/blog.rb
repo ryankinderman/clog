@@ -1,9 +1,11 @@
+require 'xmlrpc/client'
+
 class Blog
-  def initialize(client, blog_id, login, password)
-    @client = client
-    @blog_id = blog_id
-    @login = login
-    @password = password
+  def initialize(params)
+    @client = XMLRPC::Client.new(params.host, params.xmlrpc_path, port = 80)
+    @blog_id = 1
+    @login = params.login
+    @password = params.password
   end
   
   def all_posts
