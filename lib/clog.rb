@@ -1,9 +1,3 @@
-%W(
-  blog
-  command_line
-  post_writer
-  core_ext/string).each do |file|
-  
-  require "clog/#{file}"
-  
+Dir[File.expand_path(File.dirname(__FILE__) + "/clog/*.rb")].each do |file|
+  require file
 end

@@ -11,7 +11,7 @@ module Clog
     def dump
       all_posts.each do |post|
         file_name = post["postid"] + "_" + post["link"].match(/\/([^\/]+)$/)[1]
-        file_path = @parms.post_path + "/#{file_name}"
+        file_path = @params.post_path + "/#{file_name}"
         File.open(file_path, "w") do |f|
           PostWriter.write(f, @params.host, post)
         end    
@@ -19,6 +19,15 @@ module Clog
     end
     
     def all_posts
+      # From client, we need:
+      # - recent_posts
+      # From each post, we need:
+      # - id
+      # - url
+      # - title
+      # - tags
+      # - created_at
+      # - body
       posts = recent_posts(1)
       return [] if posts.empty?
       
