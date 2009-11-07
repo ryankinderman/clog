@@ -27,7 +27,7 @@ class CommandLine
     
     def syntax
       syntax_str =<<-eos
-Syntax: blogctl dump host xmlrpc_path login password post_path
+Syntax: clog dump host xmlrpc_path login password post_path
 dump            command to dump all blog entries from a blog to a specified 
                 local directory
 host            the blog host address (ex: myblog.com)

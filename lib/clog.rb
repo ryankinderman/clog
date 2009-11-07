@@ -4,6 +4,6 @@
   post_writer
   core_ext/string).each do |file|
   
-  require "blogctl/#{file}"
+  require "clog/#{file}"
   
 end
