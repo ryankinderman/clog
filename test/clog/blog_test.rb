@@ -11,44 +11,24 @@ module Clog
         :login => 'some_login',
         :password => 'some_pass',
         :host => 'hostname',
-        :xmlrpc_path => 'xmlrpc_path'
+        :xmlrpc_path => 'xmlrpc_path',
+        :post_path => "/post/path" # doesn't belong here
       })
-      XMLRPC::Client.stubs(:new).with(@params.host, @params.xmlrpc_path, 80).
+      Client.stubs(:new).with(@params).
         returns(@client = stub("xmlrpc client"))
     end
 
-    def test_recent_posts
+    def test_dump
       blog = Blog.new(@params)
-      post_count = 5
-      call_return_value = Object.new
+      post = {
+        'postid' => (post_id = '32'), 
+        'link' => 'http://kinderman.net/articles/this-rocks'
+      }
+      @client.expects(:all_posts).returns([post])
+      File.expects(:open).with("#{@params.post_path}/#{post_id}_this-rocks", "w").yields(file = stub('file'))
+      PostWriter.expects(:write).with(file, @params.host, post)
 
-      @client.expects(:call).with('metaWeblog.getRecentPosts', 1, @params.login, @params.password, post_count).returns(call_return_value)
-      
-      return_value = blog.recent_posts(post_count)
-
-      assert_same call_return_value, return_value
-    end  
-    
-    def test_all_posts
-      blog = Blog.new(@params)
-      
-      call_return_value = {'postid' => '32'}
-      @client.expects(:call).with('metaWeblog.getRecentPosts', 1, @params.login, @params.password, 1).returns([call_return_value])
-      @client.expects(:call).with('metaWeblog.getRecentPosts', 1, @params.login, @params.password, 33).returns([call_return_value])    
-      
-      return_value = blog.all_posts
-
-      assert_equal [call_return_value], return_value    
-    end
-    
-    def test_all_posts_with_empty_set
-      blog = Blog.new(@params)
-      
-      @client.expects(:call).with('metaWeblog.getRecentPosts', 1, @params.login, @params.password, 1).returns([])
-      
-      return_value = blog.all_posts
-
-      assert_equal [], return_value        
+      blog.dump
     end
 
   end
