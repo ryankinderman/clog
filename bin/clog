@@ -1,28 +1,18 @@
 #!/usr/bin/env ruby
 require File.expand_path(File.dirname(__FILE__) + "/../init")
 
-def dump(blog_name, path, post)
-  file_name = post["postid"] + "_" + post["link"].match(/\/([^\/]+)$/)[1]
-  file_path = path + "/#{file_name}"
-  File.open(file_path, "w") do |f|
-    PostWriter.write(f, blog_name, post)
-  end    
-end
-
 def run
   begin
-    p = CommandLine.parse($*)
+    p = Clog::CommandLine.parse(ARGV)
   rescue StandardError => e
-    puts e.message
-    puts CommandLine.syntax
+    STDERR.puts e.message
+    STDERR.puts Clog::CommandLine.syntax
     return
   end
 
-  blog = Blog.new(p)
+  blog = Clog::Blog.new(p)
   
-  blog.all_posts.each do |post|
-    dump(p.host, p.post_path, post)
-  end
+  blog.dump
 end
 
 run
