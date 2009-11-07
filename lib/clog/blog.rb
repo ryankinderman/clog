@@ -1,7 +1,7 @@
 module Clog
   class Blog
     def initialize(params)
-      @client = Client.new(params)
+      @client = params.client
       @params = params
       @blog_id = 1
     end
@@ -11,7 +11,7 @@ module Clog
         file_name = post["postid"] + "_" + post["link"].match(/\/([^\/]+)$/)[1]
         file_path = @params.post_path + "/#{file_name}"
         File.open(file_path, "w") do |f|
-          PostWriter.write(f, @params.host, post)
+          PostWriter.write(f, @params.blog_name, post)
         end    
       end
     end

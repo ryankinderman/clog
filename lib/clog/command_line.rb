@@ -1,9 +1,21 @@
 module Clog
   class CommandLine
     class CommandLineParameters < Hash
+      def initialize(params)
+        @params = params
+      end
+
+      def blog_name
+        host
+      end
+
+      def client
+        Client.new(self)
+      end
+
       def method_missing(method_sym, *args)
-        if self.include?(method_sym)
-          return self[method_sym]
+        if @params.include?(method_sym)
+          return @params[method_sym]
         end
         super
       end
@@ -22,8 +34,7 @@ module Clog
           :password => args[4],
           :post_path => args[5]
         }
-        cmdline_params = CommandLineParameters.new
-        cmdline_params.merge(hash)
+        cmdline_params = CommandLineParameters.new(hash)
       end
       
       def syntax
