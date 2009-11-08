@@ -24,11 +24,11 @@ module Clog
         validate(args)
       
         hash = {
-          :command => args[0],
-          :host => args[1],
-          :xmlrpc_path => args[2],
-          :login => args[3],
-          :password => args[4],
+          :host => args[0],
+          :xmlrpc_path => args[1],
+          :login => args[2],
+          :password => args[3],
+          :command => args[4],
           :path => args[5]
         }
         cmdline_params = CommandLineParameters.new(hash)
@@ -58,8 +58,8 @@ eos
       private
     
       def validate(args)
-        raise StandardError, "Too few arguments" if args.size < 6
-        raise StandardError, "Too many arguments" if args.size > 6
+        raise ArgumentError, "Too few arguments" if args.size < 6
+        raise ArgumentError, "Too many arguments" if args.size > 6
       end
     
     end
