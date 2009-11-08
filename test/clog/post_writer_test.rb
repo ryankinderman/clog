@@ -22,7 +22,7 @@ Link: link1
 Post: postid1
 Title: title1
 Keywords: mt_keywords1
-Format: none
+Format: markdown
 Date: 2006-10-30 01:02:03
 Pings: Off
 Comments: On
