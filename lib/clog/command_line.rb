@@ -1,5 +1,6 @@
 module Clog
   class CommandLine
+    class ArgumentError < StandardError; end
     class CommandLineParameters < Hash
       def initialize(params)
         @params = params
