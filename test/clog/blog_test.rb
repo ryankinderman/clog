@@ -12,13 +12,22 @@ module Clog
       })
     end
 
+    def test_that_permalinkize_downcases_and_replaces_spaces_with_underscores
+      assert_equal "the-blah-yar", Blog.permalinkize("The Blah Yar")
+    end
+
+    def test_that_permalinkize_replaces_any_non_alpha_or_numeric_character_with_dash
+      assert_equal "the-828-blah-yar", Blog.permalinkize('The 828 Blah`~!@#$%^&*" (;:}{][<>/?-=+Yar')
+    end
+
     def test_dump
       blog = Blog.new(@params)
       post = stub('post', 
         :id => '32', 
-        :link => 'http://kinderman.net/articles/this-rocks')
+        :title => 'This Rocks')
       @params.client.expects(:all_posts).returns([post])
-      post.expects(:write).with("#{@params.post_path}/#{post.id}_this-rocks")
+      Blog.expects(:permalinkize).with(post.title).returns(perma = "this-rocks")
+      post.expects(:write).with("#{@params.post_path}/#{post.id}_#{perma}")
 
       blog.dump
     end
