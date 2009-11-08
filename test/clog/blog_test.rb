@@ -14,12 +14,11 @@ module Clog
 
     def test_dump
       blog = Blog.new(@params)
-      post = {
-        'postid' => (post_id = '32'), 
-        'link' => 'http://kinderman.net/articles/this-rocks'
-      }
+      post = stub('post', 
+        :id => '32', 
+        :link => 'http://kinderman.net/articles/this-rocks')
       @params.client.expects(:all_posts).returns([post])
-      PostWriter.expects(:write).with("#{@params.post_path}/#{post_id}_this-rocks", post)
+      PostWriter.expects(:write).with("#{@params.post_path}/#{post.id}_this-rocks", post)
 
       blog.dump
     end
