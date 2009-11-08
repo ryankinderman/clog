@@ -10,9 +10,7 @@ module Clog
       @client.all_posts.each do |post|
         file_name = post["postid"] + "_" + post["link"].match(/\/([^\/]+)$/)[1]
         file_path = @params.post_path + "/#{file_name}"
-        File.open(file_path, "w") do |f|
-          PostWriter.write(f, @params.blog_name, post)
-        end    
+        PostWriter.write(file_path, post)
       end
     end
     

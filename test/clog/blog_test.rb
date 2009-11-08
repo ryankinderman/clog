@@ -8,7 +8,6 @@ module Clog
     def setup
       @params = stub('blog params', {
         :client => stub('client'),
-        :blog_name => "cool blog",
         :post_path => "/post/path"
       })
     end
@@ -20,8 +19,7 @@ module Clog
         'link' => 'http://kinderman.net/articles/this-rocks'
       }
       @params.client.expects(:all_posts).returns([post])
-      File.expects(:open).with("#{@params.post_path}/#{post_id}_this-rocks", "w").yields(file = stub('file'))
-      PostWriter.expects(:write).with(file, @params.blog_name, post)
+      PostWriter.expects(:write).with("#{@params.post_path}/#{post_id}_this-rocks", post)
 
       blog.dump
     end

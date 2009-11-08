@@ -29,11 +29,10 @@ module Clog
       }
       io = StringIO.new
       
-      PostWriter.write(io, 'some blog name', post)
+      PostWriter.new(io).write(post)
       
       msg =<<-s
 Type: Blog Post (HTML)
-Blog: some blog name
 Link: link1
 Post: postid1
 Title: title1

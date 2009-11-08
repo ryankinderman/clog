@@ -1,17 +1,17 @@
 module Clog
   class PostWriter
-    def self.write(io, blog_name, post)
-      self.new(io, blog_name).write(post)
+    def self.write(file_path, post)
+      File.open(file_path, "w") do |f|
+        self.new(f).write(post)
+      end    
     end
     
-    def initialize(io, blog_name)
+    def initialize(io)
       @io = io
-      @blog_name = blog_name
     end
     
     def write(post)
       write_line "Type: Blog Post (HTML)"
-      write_line "Blog: #{@blog_name}"
       write_line "Link: #{post["link"]}"
       write_line "Post: #{post["postid"]}"
       write_line "Title: #{post["title"]}"
@@ -27,7 +27,7 @@ module Clog
     private
     
     def write_line(string='')
-      @io.write(string + "\n")
+      @io.puts string
     end
   end
 end
