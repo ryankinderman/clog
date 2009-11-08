@@ -18,7 +18,7 @@ module Clog
         :id => '32', 
         :link => 'http://kinderman.net/articles/this-rocks')
       @params.client.expects(:all_posts).returns([post])
-      PostWriter.expects(:write).with("#{@params.post_path}/#{post.id}_this-rocks", post)
+      post.expects(:write).with("#{@params.post_path}/#{post.id}_this-rocks")
 
       blog.dump
     end
