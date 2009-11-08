@@ -24,7 +24,19 @@ class Post
   # - tags
   # - created_at
   # - body
-  def write(io)
+  def write(target)
+    if target.is_a?(String)
+      File.open(target, 'w') do |f|
+        write_io(f)
+      end
+    else
+      write_io(target)
+    end
+  end
+
+  private
+
+  def write_io(io)
     io.puts "Type: Blog Post (HTML)"
     io.puts "Link: #{link}"
     io.puts "Post: #{id}"
