@@ -3,28 +3,13 @@ require 'stringio'
 
 module Clog
   class PostWriterTest < Test::Unit::TestCase
-    class MockDateTime
-      def initialize(year, month, day, hour, min, sec)
-        @year = year
-        @mon = month
-        @day = day
-        @hour = hour
-        @min = min
-        @sec = sec
-      end
-      
-      def to_time
-        Time.mktime(@year, @mon, @day, @hour, @min, @sec)
-      end
-    end
-    
     def test_write
       post = {
         "link" => "link1",
         "postid" => "postid1",
         "title" => "title1",
         "mt_keywords" => "mt_keywords1",
-        "dateCreated" => MockDateTime.new(2006, 10, 30, 1, 2, 3), 
+        "dateCreated" => stub('date created', :to_time => Time.mktime(2006,10,30,1,2,3)),
         "description" => "description1"
       }
       io = StringIO.new
