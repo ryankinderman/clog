@@ -21,15 +21,15 @@ module Clog
     end
 
     def test_dump
-      blog = Blog.new(@params)
+      blog = Blog.new(client = mock('client'))
       post = stub('post', 
         :id => '32', 
         :title => 'This Rocks')
-      @params.client.expects(:all_posts).returns([post])
+      client.expects(:all_posts).returns([post])
       Blog.expects(:permalinkize).with(post.title).returns(perma = "this-rocks")
-      post.expects(:write).with("#{@params.post_path}/#{post.id}_#{perma}")
+      post.expects(:write).with("#{dump_path = "/some/path"}/#{post.id}_#{perma}")
 
-      blog.dump
+      blog.dump(dump_path)
     end
 
   end

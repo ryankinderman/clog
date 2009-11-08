@@ -10,9 +10,9 @@ def run
     return
   end
 
-  blog = Clog::Blog.new(p)
+  blog = Clog::Blog.new(p.client)
   
-  blog.dump
+  blog.dump(p.path)
 end
 
 run

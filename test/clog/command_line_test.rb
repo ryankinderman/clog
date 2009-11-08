@@ -27,9 +27,9 @@ module Clog
       assert_equal 'somepassword', p.password
     end
     
-    def test_parse_extracts_post_path
+    def test_parse_extracts_path
       p = CommandLine.parse(arguments.with(5 => '/post/path'))
-      assert_equal '/post/path', p.post_path
+      assert_equal '/post/path', p.path
     end
     
     def test_parse_with_too_few_arguments
@@ -45,19 +45,27 @@ module Clog
         CommandLine.parse(arguments.push('another argument'))
       end
     end
+
+    def test_that_client_is_created
+      parameters = CommandLine.parse(arguments)
+      Client.expects(:new).with(parameters.host, parameters.xmlrpc_path, port = 80, parameters.login, parameters.password).
+        returns(client = mock('client'))
+
+      assert_equal client, parameters.client
+    end
     
     def test_syntax
       syntax_str =<<-eos
-  Syntax: clog dump host xmlrpc_path login password post_path
-  dump            command to dump all blog entries from a blog to a specified 
-                  local directory
-  host            the blog host address (ex: myblog.com)
-  xmlrpc_path     the path to your blog's XMLRPC service (currently only 
-                  metaWeblog)
-  login           the login to your blog
-  password        the password to your blog
-  post_path       the path on your local computer that you want to write the blog 
-                  posts to
+Syntax: clog dump host xmlrpc_path login password path
+dump            command to dump all blog entries from a blog to a specified 
+                local directory
+host            the blog host address (ex: myblog.com)
+xmlrpc_path     the path to your blog's XMLRPC service (currently only 
+                metaWeblog)
+login           the login to your blog
+password        the password to your blog
+path            the path on your local computer that you want to write the blog 
+                posts to
       eos
       
       assert_equal syntax_str, CommandLine.syntax
