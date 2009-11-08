@@ -36,17 +36,23 @@ module Clog
       
       def syntax
         syntax_str =<<-eos
-Syntax: clog dump host xmlrpc_path login password path
-dump            command to dump all blog entries from a blog to a specified 
-                local directory
+Syntax: clog [host] [xmlrpc_path] [login] [password] [command] [command_args]
 host            the blog host address (ex: myblog.com)
 xmlrpc_path     the path to your blog's XMLRPC service (currently only 
                 metaWeblog)
 login           the login to your blog
 password        the password to your blog
-path            the path on your local computer that you want to write the blog 
+command         the command to run on the blog. See 'Commands' below details.
+                local directory
+command_args    arguments to the given command. See 'Commands' below for details.
+
+Commands:
+  dump [path]
+    command to dump all blog entries from a blog to a specified
+    Arguments:
+      path      the path on your local computer that you want to write the blog
                 posts to
-        eos
+eos
       end
     
       private
