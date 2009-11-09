@@ -29,14 +29,23 @@ module Clog
       CommandLine.run(args)
     end
 
-    def test_parse_with_too_few_arguments
+    def test_run_exits_with_1_from_argument_error
+      CommandLine.expects(:exit).with(1).raises(StandardError)
+      STDERR.stubs(:puts)
+
+      begin
+        CommandLine.run(arguments + ['one', 'two', 'many'])
+      rescue StandardError; end
+    end
+
+    def test_parse_with_too_few_arguments_raises_argument_error
       called = false
       assert_raise CommandLine::ArgumentError do 
         CommandLine.parse(arguments[0..arguments.size-2])
       end
     end
 
-    def test_parse_with_too_many_arguments
+    def test_parse_with_too_many_arguments_raises_argument_error
       called = false
       assert_raise CommandLine::ArgumentError do 
         CommandLine.parse(arguments.push('another argument'))

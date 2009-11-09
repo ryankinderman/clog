@@ -26,7 +26,7 @@ module Clog
         rescue ArgumentError => e
           STDERR.puts e.message
           STDERR.puts syntax
-          return
+          exit 1
         end
 
         blog = Blog.new(p.client)
