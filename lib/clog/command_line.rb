@@ -20,16 +20,16 @@ module Clog
     
     class << self
       
-      def run
+      def run(args)
         begin
-          p = parse(ARGV)
-        rescue Clog::CommandLine::ArgumentError => e
+          p = parse(args)
+        rescue ArgumentError => e
           STDERR.puts e.message
-          STDERR.puts Clog::CommandLine.syntax
+          STDERR.puts syntax
           return
         end
 
-        blog = Clog::Blog.new(p.client)
+        blog = Blog.new(p.client)
         
         blog.dump(p.path)
       end

@@ -2,36 +2,33 @@ require File.expand_path(File.join(File.dirname(__FILE__), '/../test_helper'))
 
 module Clog
   class CommandLineTest < Test::Unit::TestCase
-    def test_parse_extracts_host
-      p = CommandLine.parse(arguments.with(0 => 'kinderman.net'))
-      assert_equal 'kinderman.net', p.host
+    def test_parse_extracts_arguments
+      p = CommandLine.parse(arguments.with(
+        0 => (host = 'kinderman.net'),
+        1 => (xmlrpc_path = '/backend/xmlrpc'),
+        2 => (login = 'someuser'),
+        3 => (password = 'somepassword'),
+        4 => (command = 'command'),
+        5 => (path = '/post/path')
+      ))
+      
+      assert_equal host, p.host
+      assert_equal xmlrpc_path, p.xmlrpc_path
+      assert_equal login, p.login
+      assert_equal password, p.password
+      assert_equal command, p.command
+      assert_equal path, p.path
     end
 
-    def test_parse_extracts_xmlrpc_path
-      p = CommandLine.parse(arguments.with(1 => '/backend/xmlrpc'))
-      assert_equal '/backend/xmlrpc', p.xmlrpc_path
+    def test_run
+      CommandLine.expects(:parse).with(args = arguments).returns(
+        params = stub('params', :client => mock('client'), :path => "/dump/path"))
+      Blog.expects(:new).with(params.client).returns(blog = mock('blob'))
+      blog.expects(:dump).with(params.path)
+
+      CommandLine.run(args)
     end
 
-    def test_parse_extracts_login
-      p = CommandLine.parse(arguments.with(2 => 'someuser'))
-      assert_equal 'someuser', p.login
-    end
-
-    def test_parse_extracts_password
-      p = CommandLine.parse(arguments.with(3 => 'somepassword'))
-      assert_equal 'somepassword', p.password
-    end
-    
-    def test_parse_extracts_command
-      p = CommandLine.parse(arguments.with(4 => 'pull'))
-      assert_equal 'pull', p.command
-    end
-
-    def test_parse_extracts_path
-      p = CommandLine.parse(arguments.with(5 => '/post/path'))
-      assert_equal '/post/path', p.path
-    end
-    
     def test_parse_with_too_few_arguments
       called = false
       assert_raise CommandLine::ArgumentError do 
