@@ -17,6 +17,10 @@ class Post
     @tags ||= @data['mt_keywords'].split(" ")
   end
 
+  def format
+    'markdown'
+  end
+
   # From each post, we need:
   # - id
   # - url

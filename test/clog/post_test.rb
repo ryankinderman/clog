@@ -11,7 +11,8 @@ module Clog
       
       {
         'postid' => :id,
-        'link' => 'link'
+        'link' => :link,
+        'mt_convert_breaks' => :format
       }.each do |data_field, post_method|
         assert_equal post_data[data_field], post.send(post_method)
       end
@@ -38,7 +39,7 @@ Link: #{post_data['link']}
 Post: #{post_data['postid']}
 Title: #{post_data['title']}
 Keywords: #{post_data['mt_keywords']}
-Format: markdown
+Format: #{post_data['mt_convert_breaks']}
 Date: 2006-10-30 01:02:03
 Pings: Off
 Comments: On
@@ -64,7 +65,7 @@ Link: #{post_data['link']}
 Post: #{post_data['postid']}
 Title: #{post_data['title']}
 Keywords: #{post_data['mt_keywords']}
-Format: markdown
+Format: #{post_data['mt_convert_breaks']}
 Date: 2006-10-30 01:02:03
 Pings: Off
 Comments: On
@@ -83,6 +84,7 @@ Comments: On
         'postid' => "110",
         'title' => "Cool Article Title",
         'mt_keywords' => "tag1 tag2 tag3",
+        'mt_convert_breaks' => 'markdown',
         'dateCreated' => stub('date created', :to_time => Time.mktime(2006,10,30,1,2,3)),
         'description' => "This is the body of a really nifty article about something important"
       }.merge(fields)

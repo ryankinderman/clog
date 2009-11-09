@@ -1,7 +1,14 @@
 module Clog
   class Blog
-    def self.permalinkize(str)
-      str.downcase.gsub(/[^a-zA-Z0-9]+/, '-')
+    class << self
+      def permalinkize(str)
+        str.strip.downcase.gsub(/[^a-zA-Z0-9]+/, '-')
+      end
+
+      def post_file_name(post)
+        num_zeros = 4 - post.id.length
+        ("0" * num_zeros) + post.id + "_" + permalinkize(post.title) + "." + post.format
+      end
     end
 
     def initialize(client)
@@ -10,7 +17,7 @@ module Clog
 
     def dump(path)
       @client.all_posts.each do |post|
-        file_name = post.id + "_" + self.class.permalinkize(post.title)
+        file_name = self.class.post_file_name(post)
         file_path = path + "/#{file_name}"
         post.write(file_path)
       end

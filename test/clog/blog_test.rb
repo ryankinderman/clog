@@ -16,18 +16,31 @@ module Clog
       assert_equal "the-blah-yar", Blog.permalinkize("The Blah Yar")
     end
 
+    def test_that_permalinkize_strips
+      assert_equal "the-blah-yar", Blog.permalinkize("The Blah Yar ")
+    end
+
     def test_that_permalinkize_replaces_any_non_alpha_or_numeric_character_with_dash
       assert_equal "the-828-blah-yar", Blog.permalinkize('The 828 Blah`~!@#$%^&*" (;:}{][<>/?-=+Yar')
+    end
+
+    def test_post_file_name
+      Blog.stubs(:permalinkize).returns(perma = "they-came-from-mars")
+      assert_equal "0001_#{perma}.#{extension = 'markdown'}", Blog.post_file_name(stub('post',
+        :id => '1',
+        :title => 'They came from mars',
+        :format => extension
+      ))
     end
 
     def test_dump
       blog = Blog.new(client = mock('client'))
       post = stub('post', 
         :id => '32', 
-        :title => 'This Rocks')
+        :title => 'This Rocks',
+        :format => "markdown")
       client.expects(:all_posts).returns([post])
-      Blog.expects(:permalinkize).with(post.title).returns(perma = "this-rocks")
-      post.expects(:write).with("#{dump_path = "/some/path"}/#{post.id}_#{perma}")
+      post.expects(:write).with("#{dump_path = "/some/path"}/0032_this-rocks.markdown")
 
       blog.dump(dump_path)
     end
