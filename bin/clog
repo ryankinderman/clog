@@ -1,18 +1,4 @@
 #!/usr/bin/env ruby
 require File.expand_path(File.dirname(__FILE__) + "/../init")
 
-def run
-  begin
-    p = Clog::CommandLine.parse(ARGV)
-  rescue Clog::CommandLine::ArgumentError => e
-    STDERR.puts e.message
-    STDERR.puts Clog::CommandLine.syntax
-    return
-  end
-
-  blog = Clog::Blog.new(p.client)
-  
-  blog.dump(p.path)
-end
-
-run
+Clog::CommandLine.run

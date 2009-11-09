@@ -1,7 +1,7 @@
 module Clog
   class CommandLine
     class ArgumentError < StandardError; end
-    class CommandLineParameters < Hash
+    class Parameters < Hash
       def initialize(params)
         @params = params
       end
@@ -19,6 +19,20 @@ module Clog
     end
     
     class << self
+      
+      def run
+        begin
+          p = parse(ARGV)
+        rescue Clog::CommandLine::ArgumentError => e
+          STDERR.puts e.message
+          STDERR.puts Clog::CommandLine.syntax
+          return
+        end
+
+        blog = Clog::Blog.new(p.client)
+        
+        blog.dump(p.path)
+      end
     
       def parse(args, error='')
         validate(args)
@@ -31,7 +45,7 @@ module Clog
           :command => args[4],
           :path => args[5]
         }
-        cmdline_params = CommandLineParameters.new(hash)
+        cmdline_params = Parameters.new(hash)
       end
       
       def syntax
@@ -48,7 +62,7 @@ command_args    arguments to the given command. See 'Commands' below for details
 
 Commands:
   dump [path]
-    command to dump all blog entries from a blog to a specified
+    dump all blog entries from a blog to a specified directory
     Arguments:
       path      the path on your local computer that you want to write the blog
                 posts to
