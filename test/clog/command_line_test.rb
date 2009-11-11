@@ -2,6 +2,18 @@ require File.expand_path(File.join(File.dirname(__FILE__), '/../test_helper'))
 
 module Clog
   class CommandLineTest < Test::Unit::TestCase
+    #def test_that_arguments_can_be_defined
+    #  cmd_line = CommandLine.define do |arguments|
+    #    arguments.add :host
+    #    arguments.add :xmlrpc_path
+    #  end
+
+    #  arguments = cmd_line.parse([host = "kinderman.net", xmlrpc_path = "/wherever/xmlrpc"])
+
+    #  assert_equal host, arguments.host
+    #  assert_equal xmlrpc_path, arguments.xmlrpc_path
+    #end
+
     def test_parse_extracts_arguments
       p = CommandLine.parse(arguments.with(
         0 => (host = 'kinderman.net'),
