@@ -36,12 +36,20 @@ module Clog
       assert_equal 'html', post.format
     end
 
-    def test_date_created
-      post_data = metaweblog_post('dateCreated' => Time.parse("2009-8-12 17:3:19 EST"))
+    def test_date_created_in_gmt_is_returned_in_gmt
+      post_data = metaweblog_post('dateCreated' => Time.parse("2009-8-12 17:3:19 GMT"))
 
       post = Post.new(post_data)
 
-      assert_equal "2009-08-12 17:03:19", post.date_created
+      assert_equal "2009-08-12 17:03:19 GMT", post.date_created
+    end
+
+    def test_date_created_in_cst_is_returned_in_gmt
+      post_data = metaweblog_post('dateCreated' => Time.parse("2009-8-12 17:3:19 CST"))
+
+      post = Post.new(post_data)
+
+      assert_equal "2009-08-12 23:03:19 GMT", post.date_created
     end
 
     def test_write
@@ -57,7 +65,7 @@ Post: #{post_data['postid']}
 Title: #{post_data['title']}
 Keywords: #{post_data['mt_keywords']}
 Format: #{post_data['mt_convert_breaks']}
-Date: 2006-10-30 01:02:03
+Date: 2006-10-30 01:02:03 GMT
 Pings: Off
 Comments: On
 
@@ -82,7 +90,7 @@ Post: #{post_data['postid']}
 Title: #{post_data['title']}
 Keywords: #{post_data['mt_keywords']}
 Format: #{post_data['mt_convert_breaks']}
-Date: 2006-10-30 01:02:03
+Date: 2006-10-30 01:02:03 GMT
 Pings: Off
 Comments: On
 
@@ -101,7 +109,7 @@ Comments: On
         'title' => "Cool Article Title",
         'mt_keywords' => "tag1 tag2 tag3",
         'mt_convert_breaks' => 'someformat',
-        'dateCreated' => stub('date created', :to_time => (fields.delete('dateCreated') || Time.mktime(2006,10,30,1,2,3))),
+        'dateCreated' => stub('date created', :to_time => (fields.delete('dateCreated') || Time.gm(2006,10,30,1,2,3))),
         'description' => "This is the body of a really nifty article about something important"
       }.merge(fields)
     end

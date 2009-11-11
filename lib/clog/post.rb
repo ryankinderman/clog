@@ -23,7 +23,7 @@ class Post
 
   def date_created
     time = @data["dateCreated"].to_time
-    time.strftime("%Y-%m-%d %H:%M:%S")
+    time.gmtime.strftime("%Y-%m-%d %H:%M:%S GMT")
   end
 
   def write(target)
