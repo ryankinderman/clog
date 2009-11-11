@@ -2,7 +2,7 @@ module Clog
   class Blog
     class << self
       def permalinkize(str)
-        str.strip.downcase.gsub(/[^a-zA-Z0-9]+/, '-')
+        str.downcase.gsub(/[^a-zA-Z0-9]+/, '-').gsub(/-+$/, '')
       end
 
       def post_file_name(post)

@@ -16,8 +16,12 @@ module Clog
       assert_equal "the-blah-yar", Blog.permalinkize("The Blah Yar")
     end
 
-    def test_that_permalinkize_strips
+    def test_that_permalinkize_strips_trailing_spaces
       assert_equal "the-blah-yar", Blog.permalinkize("The Blah Yar ")
+    end
+
+    def test_that_permalinkize_strips_trailing_dashes
+      assert_equal "the-blah-yar", Blog.permalinkize("The Blah Yar!")
     end
 
     def test_that_permalinkize_replaces_any_non_alpha_or_numeric_character_with_dash
