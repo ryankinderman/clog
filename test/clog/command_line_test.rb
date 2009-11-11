@@ -8,7 +8,7 @@ module Clog
         1 => (xmlrpc_path = '/backend/xmlrpc'),
         2 => (login = 'someuser'),
         3 => (password = 'somepassword'),
-        4 => (command = 'command'),
+        4 => (command = 'dump'),
         5 => (path = '/post/path')
       ))
       
@@ -52,6 +52,13 @@ module Clog
       end
     end
 
+    def test_parse_with_unrecognized_command_raises_argument_error
+      begin
+        CommandLine.parse(arguments.with(4 => "unrecognized"))
+        fail "Expected to raise CommandLine::ArgumentError, but didn't"
+      rescue CommandLine::ArgumentError; end
+    end
+
     def test_that_client_is_created
       parameters = CommandLine.parse(arguments)
       Client.expects(:new).with(parameters.host, parameters.xmlrpc_path, port = 80, parameters.login, parameters.password).
@@ -68,7 +75,7 @@ module Clog
     private
     
     def arguments
-      a = ['kinderman.net', '/backend/xmlrpc', 'someuser', 'somepassword', 'pull', '/post/path']
+      a = ['kinderman.net', '/backend/xmlrpc', 'someuser', 'somepassword', 'dump', '/post/path']
       class << a
         def with(params)
           params.keys.each do |index|

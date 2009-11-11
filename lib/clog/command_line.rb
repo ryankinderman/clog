@@ -1,7 +1,7 @@
 module Clog
   class CommandLine
     class ArgumentError < StandardError; end
-    class Parameters < Hash
+    class Arguments < Hash
       def initialize(params)
         @params = params
       end
@@ -45,7 +45,7 @@ module Clog
           :command => args[4],
           :path => args[5]
         }
-        cmdline_params = Parameters.new(hash)
+        cmdline_params = Arguments.new(hash)
       end
       
       def syntax
@@ -66,14 +66,26 @@ Commands:
     Arguments:
       path      the path on your local computer that you want to write the blog
                 posts to
+  post [file]
+    post a blog entry
+    Arguments
+      file      the file containing the article to post
 eos
       end
     
       private
     
       def validate(args)
-        raise ArgumentError, "Too few arguments" if args.size < 6
-        raise ArgumentError, "Too many arguments" if args.size > 6
+        message = nil
+        if args.size < 6
+          message = "Too few arguments"
+        elsif args.size > 6
+          message = "Too many arguments"
+        elsif !["dump"].include?(args[4])
+          message = "Unrecognized command: #{args[4]}"
+        end
+        
+        raise ArgumentError, message if message
       end
     
     end
