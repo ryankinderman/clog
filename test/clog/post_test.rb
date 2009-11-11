@@ -1,6 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../test_helper")
 require 'stringio'
 require 'tempfile'
+require 'time'
 
 module Clog
   class PostTest < Test::Unit::TestCase
@@ -12,6 +13,7 @@ module Clog
       {
         'postid' => :id,
         'link' => :link,
+        'title' => :title,
         'mt_convert_breaks' => :format
       }.each do |data_field, post_method|
         assert_equal post_data[data_field], post.send(post_method)
@@ -26,6 +28,22 @@ module Clog
       assert_equal ['tag1', 'tag2', 'tag3'], post.tags
     end
 
+    def test_that_format_returns_html_if_not_specified_in_data
+      post_data = metaweblog_post('mt_convert_breaks' => nil)
+
+      post = Post.new(post_data)
+
+      assert_equal 'html', post.format
+    end
+
+    def test_date_created
+      post_data = metaweblog_post('dateCreated' => Time.parse("2009-8-12 17:3:19 EST"))
+
+      post = Post.new(post_data)
+
+      assert_equal "2009-08-12 17:03:19", post.date_created
+    end
+
     def test_write
       post_data = metaweblog_post
       post = Post.new(post_data)
@@ -34,7 +52,6 @@ module Clog
       post.write(io)
 
       msg =<<-s
-Type: Blog Post (HTML)
 Link: #{post_data['link']}
 Post: #{post_data['postid']}
 Title: #{post_data['title']}
@@ -60,7 +77,6 @@ Comments: On
       post.write(tmpfile.path)
 
       msg =<<-s
-Type: Blog Post (HTML)
 Link: #{post_data['link']}
 Post: #{post_data['postid']}
 Title: #{post_data['title']}
@@ -84,8 +100,8 @@ Comments: On
         'postid' => "110",
         'title' => "Cool Article Title",
         'mt_keywords' => "tag1 tag2 tag3",
-        'mt_convert_breaks' => 'markdown',
-        'dateCreated' => stub('date created', :to_time => Time.mktime(2006,10,30,1,2,3)),
+        'mt_convert_breaks' => 'someformat',
+        'dateCreated' => stub('date created', :to_time => (fields.delete('dateCreated') || Time.mktime(2006,10,30,1,2,3))),
         'description' => "This is the body of a really nifty article about something important"
       }.merge(fields)
     end
