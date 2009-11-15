@@ -1,51 +1,22 @@
 module Clog
   class CommandLine
     class ArgumentError < StandardError; end
-    class Arguments
-      def initialize(params)
-        @params = params
-      end
-
-      def client
-        Client.new(host, xmlrpc_path, login, password)
-      end
-
-      def method_missing(method_sym, *args)
-        if @params.include?(method_sym)
-          return @params[method_sym]
-        end
-        super
-      end
-    end
     
     class << self
       
       def run(args)
+        cmd = nil
         begin
-          p = parse(args)
+          cmd = new(args)
         rescue ArgumentError => e
           STDERR.puts e.message
           STDERR.puts usage
           exit 1
         end
 
-        Blog.dump(p.client, p.path)
+        cmd.command.run
       end
     
-      def parse(args, error='')
-        validate(args)
-      
-        hash = {
-          :host => args[0],
-          :xmlrpc_path => args[1],
-          :login => args[2],
-          :password => args[3],
-          :command => args[4],
-          :path => args[5]
-        }
-        cmdline_params = Arguments.new(hash)
-      end
-      
       def usage
         usage_str =<<-eos
 Syntax: clog [host] [xmlrpc_path] [login] [password] [command] [command_args]
@@ -71,21 +42,75 @@ Commands:
 eos
       end
     
-      private
-    
-      def validate(args)
-        message = nil
-        if args.size < 6
-          message = "Too few arguments"
-        elsif args.size > 6
-          message = "Too many arguments"
-        elsif !["dump"].include?(args[4])
-          message = "Unrecognized command: #{args[4]}"
+    end
+
+    def initialize(args)
+      @args = args
+      @xmlrpc_args = [:host, :xmlrpc_path, :login, :password]
+      validate!
+    end
+
+    def minimum_arg_count
+      @xmlrpc_args.size + 1
+    end
+
+    def command
+      @command ||= \
+        begin
+          name = @args[minimum_arg_count - 1]
+          args = @args[minimum_arg_count..-1]
+          client = Client.new(*@args[0..@xmlrpc_args.size - 1])
+
+          Command.new(name, client, args)
         end
-        
-        raise ArgumentError, message if message
+    end
+
+    private
+
+    def validate!
+      message = nil
+      if @args.size < minimum_arg_count
+        message = "Too few arguments"
+      elsif !command.valid?
+        message = command.message
       end
-    
+      
+      raise ArgumentError, message if message
+    end
+
+    class Command
+      class << self
+        def definitions
+          @definitions ||= {
+            :dump => 1
+          }
+        end
+      end
+
+      def initialize(name, client, args)
+        @name = name.to_sym
+        @args = args
+        @client = client
+      end
+
+      def valid?
+        definitions = self.class.definitions
+        if !definitions.include?(@name)
+          @message = "Unrecognized command: #{@name}"
+        elsif @args.size < (required_arg_count = definitions[@name])
+          @message = "Too few arguments for #{@name}"
+        end
+
+        @message.nil?
+      end
+
+      def message
+        @message
+      end
+
+      def run
+        Blog.send @name, @client, *@args
+      end
     end
   end
 end
