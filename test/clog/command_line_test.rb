@@ -2,6 +2,12 @@ require File.expand_path(File.join(File.dirname(__FILE__), '/../test_helper'))
 
 module Clog
   class CommandLineTest < Test::Unit::TestCase
+    class HappyExitError < StandardError; end
+
+    def setup
+      Client.stubs(:new).returns(client = mock("mock client"))
+    end
+
     def test_run
       xmlrpc_args = build_xmlrpc_args
       command_args = [
@@ -27,11 +33,11 @@ module Clog
       CommandLine.expects(:usage).returns(usage_message = "usage message")
       STDERR.stubs(:puts)
       STDERR.expects(:puts).at_least_once.with(usage_message)
-      CommandLine.expects(:exit).with(1).raises(StandardError)
+      CommandLine.expects(:exit).with(1).raises(HappyExitError)
 
       begin
         CommandLine.run(xmlrpc_args + dump_args)
-      rescue StandardError; end
+      rescue HappyExitError; end
     end
 
     def test_run_with_missing_command_args_exits_1_and_provides_usage
@@ -44,11 +50,11 @@ module Clog
       CommandLine.expects(:usage).returns(usage_message = "usage message")
       STDERR.stubs(:puts)
       STDERR.expects(:puts).at_least_once.with(usage_message)
-      CommandLine.expects(:exit).with(1).raises(StandardError)
+      CommandLine.expects(:exit).with(1).raises(HappyExitError)
 
       begin
         CommandLine.run(xmlrpc_args + command_args)
-      rescue StandardError; end
+      rescue HappyExitError; end
     end
 
     def test_run_with_unrecognized_command_exits_1_and_provides_usage
@@ -61,12 +67,24 @@ module Clog
       CommandLine.expects(:usage).returns(usage_message = "usage message")
       STDERR.stubs(:puts)
       STDERR.expects(:puts).at_least_once.with(usage_message)
-      CommandLine.expects(:exit).with(1).raises(StandardError)
+      CommandLine.expects(:exit).with(1).raises(HappyExitError)
 
       begin
         CommandLine.run(xmlrpc_args + command_args)
-      rescue StandardError; end
+      rescue HappyExitError; end
     end
+
+    #def test_run_with_dump
+    #  xmlrpc_args = build_xmlrpc_args
+    #  command_args = [
+    #    command = 'dump',
+    #    cmd_arg = '/path'
+    #  ]
+
+    #  Client.expects(:new)
+
+    #  CommandLine.run(xmlrpc_args + command_args)
+    #end
 
     private
 
