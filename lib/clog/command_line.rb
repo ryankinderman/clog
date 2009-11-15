@@ -50,15 +50,15 @@ eos
       validate!
     end
 
-    def minimum_arg_count
+    def required_arg_count
       @xmlrpc_args.size + 1
     end
 
     def command
       @command ||= \
         begin
-          name = @args[minimum_arg_count - 1]
-          args = @args[minimum_arg_count..-1]
+          name = @args[required_arg_count - 1]
+          args = @args[required_arg_count..-1]
           client = Client.new(*@args[0..@xmlrpc_args.size - 1])
 
           Command.new(name, client, args)
@@ -69,7 +69,7 @@ eos
 
     def validate!
       message = nil
-      if @args.size < minimum_arg_count
+      if @args.size < required_arg_count
         message = "Too few arguments"
       elsif !command.valid?
         message = command.message
