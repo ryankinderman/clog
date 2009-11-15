@@ -74,17 +74,34 @@ module Clog
       rescue HappyExitError; end
     end
 
-    #def test_run_with_dump
-    #  xmlrpc_args = build_xmlrpc_args
-    #  command_args = [
-    #    command = 'dump',
-    #    cmd_arg = '/path'
-    #  ]
+    def test_run_with_dump
+      xmlrpc_args = build_xmlrpc_args
+      command_args = [
+        command = 'dump',
+        dump_path = '/path'
+      ]
 
-    #  Client.expects(:new)
+      Client.expects(:new).with(*xmlrpc_args).returns(client = mock("xmlrpc client"))
+      Blog.expects(command).with(client, dump_path)
 
-    #  CommandLine.run(xmlrpc_args + command_args)
-    #end
+      CommandLine.run(xmlrpc_args + command_args)
+    end
+
+    def test_run_with_dump_with_missing_dump_path
+      xmlrpc_args = build_xmlrpc_args
+      command_args = [
+        command = 'dump'
+      ]
+
+      CommandLine.expects(:exit).with(1).raises(HappyExitError)
+      CommandLine.stubs(:usage).returns(usage_message = "usage message")
+      STDERR.stubs(:puts)
+      STDERR.expects(:puts).with(usage_message).at_least_once
+
+      begin
+        CommandLine.run(xmlrpc_args + command_args)
+      rescue HappyExitError; end
+    end
 
     private
 
