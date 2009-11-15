@@ -2,8 +2,8 @@ require 'xmlrpc/client'
 
 module Clog
   class Client
-    def initialize(host, xmlrpc_path, port, login, password)
-      @xmlrpc = XMLRPC::Client.new(host, xmlrpc_path, port)
+    def initialize(host, xmlrpc_path, login, password)
+      @xmlrpc = XMLRPC::Client.new(host, xmlrpc_path, port = 80)
       @login = login
       @password = password
     end

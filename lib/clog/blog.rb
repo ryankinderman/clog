@@ -9,6 +9,10 @@ module Clog
         num_zeros = 4 - post.id.length
         ("0" * num_zeros) + post.id + "_" + permalinkize(post.title) + "." + post.format
       end
+
+      def dump(client, path)
+        new(client).dump(path)
+      end
     end
 
     def initialize(client)

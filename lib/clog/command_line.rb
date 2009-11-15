@@ -1,13 +1,13 @@
 module Clog
   class CommandLine
     class ArgumentError < StandardError; end
-    class Arguments < Hash
+    class Arguments
       def initialize(params)
         @params = params
       end
 
       def client
-        Client.new(host, xmlrpc_path, port = 80, login, password)
+        Client.new(host, xmlrpc_path, login, password)
       end
 
       def method_missing(method_sym, *args)
@@ -25,13 +25,11 @@ module Clog
           p = parse(args)
         rescue ArgumentError => e
           STDERR.puts e.message
-          STDERR.puts syntax
+          STDERR.puts usage
           exit 1
         end
 
-        blog = Blog.new(p.client)
-        
-        blog.dump(p.path)
+        Blog.dump(p.client, p.path)
       end
     
       def parse(args, error='')
@@ -48,8 +46,8 @@ module Clog
         cmdline_params = Arguments.new(hash)
       end
       
-      def syntax
-        syntax_str =<<-eos
+      def usage
+        usage_str =<<-eos
 Syntax: clog [host] [xmlrpc_path] [login] [password] [command] [command_args]
 host            the blog host address (ex: myblog.com)
 xmlrpc_path     the path to your blog's XMLRPC service (currently only 
