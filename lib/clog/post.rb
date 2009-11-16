@@ -89,6 +89,8 @@ class Post
       i += 1
     end
 
+    data['description'] = lines[i..-1].join("\n")
+
     data
   end
 

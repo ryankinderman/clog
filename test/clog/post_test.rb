@@ -104,7 +104,7 @@ Comments: On
 
     # {"mt_excerpt"=>"", "title"=>"Blog up", "mt_tb_ping_urls"=>["http://rpc.technorati.com/rpc/ping", "http://ping.blo.gs/", "http://rpc.weblogs.com/RPC2", "http://wordpress.org/", "http://www.rubyist.net/~matz/", "http://www.ruby-lang.org", "http://www.loudthinking.com/", "http://www.rubyonrails.org", "http://blog.leetsoft.com/", "http://www.typosphere.org"], "mt_allow_comments"=>1, "permaLink"=>"http://kinderman.net/articles/2006/04/07/blog-up", "url"=>"http://kinderman.net/articles/2006/04/07/blog-up", "mt_convert_breaks"=>"none", "mt_keywords"=>"", "mt_text_more"=>"", "postid"=>"1", "dateCreated"=>#<XMLRPC::DateTime:0x1011aefa8 @sec=0, @month=4, @min=5, @year=2006, @hour=22, @day=7>, "link"=>"http://kinderman.net/articles/2006/04/07/blog-up", "categories"=>["general"], "description"=>"<p>\nAt long last, I've finally got my blog up using a decent engine. I started off using <a href=\"http://wordpress.org/\">WordPress</a>, but the PHP made my little object-oriented heart ache. I would like to thank <a href=\"http://www.rubyist.net/~matz/\">Matsumoto San</a>, for bringing us <a href=\"http://www.ruby-lang.org\">Ruby</a>, <a href=\"http://www.loudthinking.com/\">David Heinemeir Hansson</a> for <a href=\"http://www.rubyonrails.org\">Rails</a>, and <a href=\"http://blog.leetsoft.com/\">Tobias Luetke</a> for <a href=\"http://www.typosphere.org\">Typo</a>.\n</p>", "mt_allow_pings"=>0}
     def test_that_it_can_be_constructed_from_a_string
-      string =<<-EOS
+      string = <<-EOS
 Title: #{title = "Abc"}
 Keywords: #{keywords = "one two three"}
 Format: #{format = "markdown"}
@@ -115,11 +115,13 @@ Comments: #{comments = "On"}
       EOS
 
       post = Post.new(string)
+
       assert_equal title, post.data['title']
       assert_equal keywords, post.data['mt_keywords']
       assert_equal format, post.data['mt_convert_breaks']
       assert_equal 0, post.data['mt_allow_pings']
       assert_equal 1, post.data['mt_allow_comments']
+      assert_equal body, post.data['description']
     end
 
     def metaweblog_post(fields = {})
