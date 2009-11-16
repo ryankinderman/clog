@@ -44,21 +44,73 @@ class Post
 
   private
 
+  module Types
+    class String
+      class << self
+        def to_file(value)
+          value.to_s
+        end
+        def to_dto(value)
+          value.to_s
+        end
+      end
+    end
+
+    class Boolean
+      class << self
+        @@file_to_dto = { "On" => 1, "Off" => 0 }
+
+        def to_file(value)
+          verify!(@@file_to_dto.invert[value])
+        end
+
+        def to_dto(value)
+          verify!(@@file_to_dto[value])
+        end
+
+        private
+
+        def verify!(converted)
+          raise ArgumentError, "Unrecognized value: #{value.inspect}" if converted.nil?
+          converted
+        end
+      end
+    end
+
+    class Date
+      def to_file(value)
+        time = value.to_time
+        time.gmtime.strftime("%Y-%m-%d %H:%M:%S GMT")
+      end
+
+      def to_dto(value)
+
+      end
+    end
+  end
+
+  FIELDS = {
+    "Link" => "link",
+    "Post" => "postid",
+    "Title" => "title", 
+    "Keywords" => "mt_keywords", 
+    "Format" => "mt_convert_breaks", 
+    "Date" => {
+      :name => "dateCreated",
+      :type => Types::Date
+    },
+    "Pings" => {
+      :name => "mt_allow_pings",
+      :type => Types::Boolean
+    }, 
+    "Comments" => {
+      :name => "mt_allow_comments",
+      :type => Types::Boolean
+    }
+  }
+
   def build_data(data_string)
     data = {}
-    fields = {
-      "Title" => "title", 
-      "Keywords" => "mt_keywords", 
-      "Format" => "mt_convert_breaks", 
-      "Pings" => {
-        :name => "mt_allow_pings",
-        :type => "boolean"
-      }, 
-      "Comments" => {
-        :name => "mt_allow_comments",
-        :type => "boolean"
-      }
-    }
     lines = data_string.split("\n")
     i = 0
     end_of_fields = false
@@ -71,18 +123,13 @@ class Post
       else
         field_match = line.match(/^([^:]+): (.*)$/)
         unless field_match.nil?
-          field_name = field_match[1]
-          field_value = field_match[2]
-          field_defn = fields[field_name]
+          field_name, field_value = field_match[1..2]
+          field_defn = FIELDS[field_name]
           cnv_field_name = field_defn.is_a?(Hash) ? field_defn[:name] : field_defn
           cnv_field_type = field_defn[:type] if field_defn.is_a?(Hash)
 
           data[cnv_field_name] = \
-            if cnv_field_type == "boolean"
-              {"On" => 1, "Off" => 0}[field_value]
-            else
-              field_value
-            end
+            cnv_field_type.nil? ? field_value : cnv_field_type.to_dto(field_value)
         end
       end
 
