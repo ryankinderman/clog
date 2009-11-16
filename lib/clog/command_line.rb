@@ -82,7 +82,8 @@ eos
       class << self
         def definitions
           @definitions ||= {
-            :dump => 1
+            :dump => 1,
+            :post => 1
           }
         end
       end

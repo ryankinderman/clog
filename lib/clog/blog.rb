@@ -10,8 +10,10 @@ module Clog
         ("0" * num_zeros) + post.id + "_" + permalinkize(post.title) + "." + post.format
       end
 
-      def dump(client, path)
-        new(client).dump(path)
+      [:dump, :post].each do |command|
+        define_method command do |client, *args|
+          new(client).send(command, *args)
+        end
       end
     end
 
@@ -25,6 +27,10 @@ module Clog
         file_path = path + "/#{file_name}"
         post.write(file_path)
       end
+    end
+
+    def post(file_path)
+      @client.create_post(Post.new(file_path))
     end
     
   end

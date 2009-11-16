@@ -103,6 +103,19 @@ module Clog
       rescue HappyExitError; end
     end
 
+    def test_run_with_post
+      xmlrpc_args = build_xmlrpc_args
+      command_args = [
+        command = 'post',
+        file_path = '/path/to/file'
+      ]
+
+      Client.expects(:new).with(*xmlrpc_args).returns(client = mock("mock client"))
+      Blog.expects(command).with(client, file_path)
+
+      CommandLine.run(xmlrpc_args + command_args)
+    end
+
     private
 
     def build_xmlrpc_args

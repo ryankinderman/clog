@@ -49,5 +49,13 @@ module Clog
       blog.dump(dump_path)
     end
 
+    def test_post
+      blog = Blog.new(client = mock('client'))
+      Post.expects(:new).with(file_path = '/path/to/file').returns(post = mock('post'))
+      client.expects(:create_post).with(post)
+
+      blog.post(file_path)
+    end
+
   end
 end
