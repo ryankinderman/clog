@@ -51,7 +51,8 @@ module Clog
 
     def test_post
       blog = Blog.new(client = mock('client'))
-      Post.expects(:new).with(file_path = '/path/to/file').returns(post = mock('post'))
+      File.expects(:read).with(file_path = '/path/to/file').returns(string_data = "abc")
+      Post.expects(:new).with(string_data).returns(post = mock('post'))
       client.expects(:create_post).with(post)
 
       blog.post(file_path)

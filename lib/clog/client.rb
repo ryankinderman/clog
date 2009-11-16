@@ -17,15 +17,19 @@ module Clog
 
       recent_posts(most_recent_post_id + 1)
     end
+
+    def create_post(post)
+      metaweblog_command('metaWeblog.newPost', post.data)
+    end
     
     private
 
+    def metaweblog_command(command, *arguments)
+      @xmlrpc.call(command, blog_id = 1, @login, @password, *arguments)
+    end
+
     def recent_posts(count)
-      @xmlrpc.call('metaWeblog.getRecentPosts', 
-        (blog_id = 1), 
-        @login, 
-        @password, 
-        count).collect { |p| Post.new(p) }
+      metaweblog_command('metaWeblog.getRecentPosts', count).collect { |p| Post.new(p) }
     end
   end
 end
