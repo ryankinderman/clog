@@ -22,7 +22,7 @@ module Clog
     end
 
     def dump(path)
-      @client.all_posts.each do |post|
+      Post.all.each do |post|
         file_name = self.class.post_file_name(post)
         file_path = path + "/#{file_name}"
         post.write(file_path)

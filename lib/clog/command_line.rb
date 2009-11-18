@@ -59,7 +59,10 @@ eos
         begin
           name = @args[required_arg_count - 1]
           args = @args[required_arg_count..-1]
-          client = Client.new(*@args[0..@xmlrpc_args.size - 1])
+          i = 0
+          connection_params = @xmlrpc_args.inject({}) { |h, arg_name| h[arg_name] = @args[i]; i += 1; h }
+          client = Client.new(connection_params)
+          Post.connection_params = connection_params
 
           Command.new(name, client, args)
         end

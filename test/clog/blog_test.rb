@@ -38,12 +38,12 @@ module Clog
     end
 
     def test_dump
-      blog = Blog.new(client = mock('client'))
+      blog = Blog.new(mock('client'))
       post = stub('post', 
         :id => '32', 
         :title => 'This Rocks',
         :format => "markdown")
-      client.expects(:all_posts).returns([post])
+      Post.expects(:all).returns([post])
       post.expects(:write).with("#{dump_path = "/some/path"}/0032_this-rocks.markdown")
 
       blog.dump(dump_path)

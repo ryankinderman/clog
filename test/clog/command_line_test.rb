@@ -16,7 +16,7 @@ module Clog
       ]
 
       CommandLine::Command.stubs(:definitions).returns({command.to_sym => 1})
-      Client.expects(:new).with(*xmlrpc_args).returns(client = mock("mock client"))
+      Client.expects(:new).with(build_connection_parameters(xmlrpc_args)).returns(client = mock("mock client"))
       Blog.expects(command).with(client, command_arg)
 
       CommandLine.run(xmlrpc_args + command_args)
@@ -81,7 +81,7 @@ module Clog
         dump_path = '/path'
       ]
 
-      Client.expects(:new).with(*xmlrpc_args).returns(client = mock("xmlrpc client"))
+      Client.expects(:new).with(build_connection_parameters(xmlrpc_args)).returns(client = mock("xmlrpc client"))
       Blog.expects(command).with(client, dump_path)
 
       CommandLine.run(xmlrpc_args + command_args)
@@ -110,7 +110,7 @@ module Clog
         file_path = '/path/to/file'
       ]
 
-      Client.expects(:new).with(*xmlrpc_args).returns(client = mock("mock client"))
+      Client.expects(:new).with(build_connection_parameters(xmlrpc_args)).returns(client = mock("mock client"))
       Blog.expects(command).with(client, file_path)
 
       CommandLine.run(xmlrpc_args + command_args)
@@ -125,6 +125,11 @@ module Clog
         login = 'someuser',
         password = 'somepassword'
       ]
+    end
+
+    def build_connection_parameters(xmlrpc_args)
+      i = 0
+      [:host, :xmlrpc_path, :login, :password].inject({}) { |h, arg_name| h[arg_name] = xmlrpc_args[i]; i+=1; h }
     end
   end
 end

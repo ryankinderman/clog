@@ -2,10 +2,13 @@ require 'xmlrpc/client'
 
 module Clog
   class Client
-    def initialize(host, xmlrpc_path, login, password)
-      @xmlrpc = XMLRPC::Client.new(host, xmlrpc_path, port = 80)
-      @login = login
-      @password = password
+    def initialize(connection_params)
+      @xmlrpc = XMLRPC::Client.new(
+        connection_params[:host], 
+        connection_params[:xmlrpc_path], 
+        port = 80)
+      @login = connection_params[:login]
+      @password = connection_params[:password]
     end
 
     def all_posts
@@ -13,7 +16,7 @@ module Clog
       return [] if posts.empty?
       
       most_recent_post = posts[0]
-      most_recent_post_id = most_recent_post.id.to_i
+      most_recent_post_id = most_recent_post['postid'].to_i
 
       recent_posts(most_recent_post_id + 1)
     end
@@ -29,7 +32,7 @@ module Clog
     end
 
     def recent_posts(count)
-      metaweblog_command('metaWeblog.getRecentPosts', count).collect { |p| Post.new(p) }
+      metaweblog_command('metaWeblog.getRecentPosts', count)
     end
   end
 end

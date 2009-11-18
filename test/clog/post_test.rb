@@ -5,6 +5,15 @@ require 'time'
 
 module Clog
   class PostTest < Test::Unit::TestCase
+    def test_that_all_returns_all_posts_from_client
+      Post.connection_params = (connection_params = {:abc => "123"})
+      Client.expects(:new).with(connection_params).returns(client = mock("client"))
+      client.expects(:all_posts).returns([post_data = mock("raw post data")])
+      Post.expects(:new).with(post_data).returns(post = mock("post"))
+
+      assert_equal [post], Post.all
+    end
+
     def test_basic_metaweblog_interface_mapping
       post_data = metaweblog_post
 

@@ -1,2 +1,3 @@
+- remove duplication of knowledge for metaweblog response
 - work out proper place to create a Post (blog? client?)
 - consolidate usage message and command/argument definition
