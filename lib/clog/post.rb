@@ -25,35 +25,65 @@ module Clog
     {
       'postid' => :id,
       'link' => :link,
-      'title' => :title
+      'mt_allow_comments' => :allows_comments,
+      'mt_allow_pings' => :allows_pings
     }.each do |data_field, method|
       define_method method do
-        @data[data_field]
+        @raw_data[data_field]
       end
     end
 
-    attr_reader :data
+    [
+      :title, 
+      :link,
+      :body,
+      :id,
+      :format,
+      :date_created,
+      :allows_pings,
+      :allows_comments
+    ].each do |attr_name|
+      define_method attr_name do
+        @attributes[attr_name]
+      end
+    end
+
+    attr_reader :raw_data, :attributes
 
     def initialize(data)
       if data.is_a?(String)
-        @data = build_data(data)
+        @raw_data = build_data(data)
+      elsif data.include?('mt_allow_comments')
+        @raw_data = data
+        @attributes = {
+          :id => @raw_data['postid'],
+          :link => @raw_data['link'],
+          :title => @raw_data['title'],
+          :format => @raw_data['mt_convert_breaks'],
+          :allows_comments => @raw_data['mt_allow_comments'],
+          :allows_pings => @raw_data['mt_allow_pings']
+        }
       else
-        @data = data
+        @attributes = data
       end
     end
 
     def tags
-      @tags ||= @data['mt_keywords'].split(" ")
-    end
-    
-    def format
-      @data['mt_convert_breaks'] || 'html'
+      @tags ||= @attributes[:tags].split(" ")
     end
 
-    def date_created
-      time = @data["dateCreated"].to_time
-      time.gmtime.strftime("%Y-%m-%d %H:%M:%S GMT")
+    def format
+      @attributes[:format] || 'html'
     end
+    
+    #def format
+    #  @raw_data['mt_convert_breaks'] || 'html'
+    #end
+
+    #def date_created
+    #  time = @raw_data["dateCreated"].to_time
+    #  time.gmtime.strftime("%Y-%m-%d %H:%M:%S GMT")
+    #end
 
     def write(target)
       if target.is_a?(String)
@@ -178,7 +208,7 @@ module Clog
       io.puts "Pings: Off"
       io.puts "Comments: On"
       io.puts
-      io.puts @data["description"]    
+      io.puts @raw_data["description"]    
     end
   end
 end

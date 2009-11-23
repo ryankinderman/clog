@@ -5,6 +5,14 @@ require 'time'
 
 module Clog
   class PostTest < Test::Unit::TestCase
+    
+    def test_that_post_can_be_created_by_attribute_hash
+      post = Post.new(params = all_post_params)
+      params.each_key do |attr_name|
+        assert_equal params[attr_name], post.send(attr_name), "Attribute: #{attr_name}"
+      end
+    end
+
     def test_that_all_returns_all_posts_from_client
       Post.connection_params = (connection_params = {:abc => "123"})
       Client.expects(:new).with(connection_params).returns(client = mock("client"))
@@ -27,7 +35,9 @@ module Clog
         'postid' => :id,
         'link' => :link,
         'title' => :title,
-        'mt_convert_breaks' => :format
+        'mt_convert_breaks' => :format,
+        'mt_allow_comments' => :allows_comments,
+        'mt_allow_pings' => :allows_pings
       }.each do |data_field, post_method|
         assert_equal post_data[data_field], post.send(post_method)
       end
@@ -128,12 +138,12 @@ Comments: On
 
       post = Post.new(saved_post(raw_data))
 
-      assert_equal raw_data['Title'], post.data['title']
-      assert_equal raw_data['Keywords'], post.data['mt_keywords']
-      assert_equal raw_data['Format'], post.data['mt_convert_breaks']
-      assert_equal 0, post.data['mt_allow_pings']
-      assert_equal 1, post.data['mt_allow_comments']
-      assert_equal raw_data['Body'], post.data['description']
+      assert_equal raw_data['Title'], post.raw_data['title']
+      assert_equal raw_data['Keywords'], post.raw_data['mt_keywords']
+      assert_equal raw_data['Format'], post.raw_data['mt_convert_breaks']
+      assert_equal 0, post.raw_data['mt_allow_pings']
+      assert_equal 1, post.raw_data['mt_allow_comments']
+      assert_equal raw_data['Body'], post.raw_data['description']
     end
 
 
@@ -162,9 +172,26 @@ Comments: On
         'title' => "Cool Article Title",
         'mt_keywords' => "tag1 tag2 tag3",
         'mt_convert_breaks' => 'someformat',
+        'mt_allow_comments' => 1,
+        'mt_allow_pings' => 0,
         'dateCreated' => stub('date created', :to_time => (fields.delete('dateCreated') || Time.gm(2006,10,30,1,2,3))),
         'description' => "This is the body of a really nifty article about something important"
       }.merge(fields)
     end
+
+    def all_post_params(overrides = {})
+      {
+        :title => "Title Abc",
+        :link => "http://kinderman.net/articles/123",
+        :body => "If you like my body, and you think I'm sexy, come on baby let me know!",
+        :id => "123",
+        :format => "markdown",
+        :date_created => Time.now.gmtime,
+        :tags => "one two three",
+        :allows_pings => false,
+        :allows_comments => true
+      }.merge(overrides)
+    end
+
   end
 end
