@@ -30,6 +30,7 @@ module Clog
     end
 
     def post(file_path)
+      #Post.create(File.read(file_path))
       string_data = File.read(file_path)
       @client.create_post(Post.new(string_data))
     end

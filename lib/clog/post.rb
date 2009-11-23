@@ -9,6 +9,12 @@ module Clog
         client.all_posts.collect { |raw_post| new(raw_post) }
       end
 
+      def create(data)
+        post = new(data)
+        post.save
+        post
+      end
+
       private
 
       def client
@@ -82,12 +88,12 @@ module Clog
           end
 
           def to_dto(value)
-            verify!(@@file_to_dto[value])
+            verify!(value, @@file_to_dto[value])
           end
 
           private
 
-          def verify!(converted)
+          def verify!(value, converted)
             raise ArgumentError, "Unrecognized value: #{value.inspect}" if converted.nil?
             converted
           end
@@ -143,10 +149,14 @@ module Clog
             field_name, field_value = field_match[1..2]
             field_defn = FIELDS[field_name]
             cnv_field_name = field_defn.is_a?(Hash) ? field_defn[:name] : field_defn
-            cnv_field_type = field_defn[:type] if field_defn.is_a?(Hash)
+            cnv_field_type = \
+              if (field_defn.is_a?(Hash) and field_defn.include?(:type)) 
+                field_defn[:type] 
+              else
+                Types::String
+              end
 
-            data[cnv_field_name] = \
-              cnv_field_type.nil? ? field_value : cnv_field_type.to_dto(field_value)
+            data[cnv_field_name] = cnv_field_type.to_dto(field_value)
           end
         end
 
