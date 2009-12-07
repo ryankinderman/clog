@@ -35,9 +35,7 @@ module Clog
         'postid' => :id,
         'link' => :link,
         'title' => :title,
-        'mt_convert_breaks' => :format,
-        'mt_allow_comments' => :allows_comments,
-        'mt_allow_pings' => :allows_pings
+        'mt_convert_breaks' => :format
       }.each do |data_field, post_method|
         assert_equal post_data[data_field], post.send(post_method)
       end
@@ -73,6 +71,27 @@ module Clog
       post = Post.new(post_data)
 
       assert_equal date_created.gmtime, post.date_created
+    end
+
+    {
+      :allows_comments => 'mt_allow_comments', 
+      :allows_pings => 'mt_allow_pings'
+    }.each do |attribute, dto_field|
+      define_method "test_that_#{attribute}_is_true_from_dto_value" do
+        post_data = metaweblog_post(dto_field => 1)
+
+        post = Post.new(post_data)
+
+        assert_equal true, post.send(attribute)
+      end
+
+      define_method "test_that_#{attribute}_is_false_from_dto_value" do
+        post_data = metaweblog_post(dto_field => 0)
+
+        post = Post.new(post_data)
+
+        assert_equal false, post.send(attribute)
+      end
     end
 
     def test_write

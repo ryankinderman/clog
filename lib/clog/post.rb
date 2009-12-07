@@ -62,8 +62,8 @@ module Clog
           :format => @raw_data['mt_convert_breaks'],
           :date_created => Types::Date.to_ruby(@raw_data['dateCreated']),
           :tags => @raw_data['mt_keywords'],
-          :allows_comments => @raw_data['mt_allow_comments'],
-          :allows_pings => @raw_data['mt_allow_pings']
+          :allows_comments => Types::Boolean.to_ruby(@raw_data['mt_allow_comments']),
+          :allows_pings => Types::Boolean.to_ruby(@raw_data['mt_allow_pings'])
         }
       else
         @attributes = data
@@ -78,15 +78,6 @@ module Clog
       @attributes[:format] || 'html'
     end
     
-    #def format
-    #  @raw_data['mt_convert_breaks'] || 'html'
-    #end
-
-    #def date_created
-    #  time = @raw_data["dateCreated"].to_time
-    #  time.gmtime.strftime("%Y-%m-%d %H:%M:%S GMT")
-    #end
-
     def write(target)
       if target.is_a?(String)
         File.open(target, 'w') do |f|
@@ -114,6 +105,18 @@ module Clog
       class Boolean
         class << self
           @@file_to_dto = { "On" => 1, "Off" => 0 }
+
+          def to_ruby(value)
+            # for now, assumes from DTO
+            case value
+            when 1
+              true
+            when 0
+              false
+            else
+              raise "Unrecognized value: #{value.inspect}"
+            end
+          end
 
           def to_native(value)
             verify!(@@file_to_dto.invert[value])
