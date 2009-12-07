@@ -44,11 +44,11 @@ module Clog
     end
 
     def test_tags
-      post_data = metaweblog_post('mt_keywords' => "tag1 tag2 tag3")
+      post_data = metaweblog_post('mt_keywords' => (tags = "tag1 tag2 tag3"))
       
       post = Post.new(post_data)
 
-      assert_equal ['tag1', 'tag2', 'tag3'], post.tags
+      assert_equal tags, post.tags
     end
 
     def test_that_format_returns_html_if_not_specified_in_data
@@ -60,19 +60,19 @@ module Clog
     end
 
     def test_date_created_in_gmt_is_returned_in_gmt
-      post_data = metaweblog_post('dateCreated' => Time.parse("2009-8-12 17:3:19 GMT"))
+      post_data = metaweblog_post('dateCreated' => (date_created = Time.parse("2009-8-12 17:3:19 GMT")))
 
       post = Post.new(post_data)
 
-      assert_equal "2009-08-12 17:03:19 GMT", post.date_created
+      assert_equal date_created, post.date_created
     end
 
     def test_date_created_in_cst_is_returned_in_gmt
-      post_data = metaweblog_post('dateCreated' => Time.parse("2009-8-12 17:3:19 CST"))
+      post_data = metaweblog_post('dateCreated' => (date_created = Time.parse("2009-8-12 17:3:19 CST")))
 
       post = Post.new(post_data)
 
-      assert_equal "2009-08-12 23:03:19 GMT", post.date_created
+      assert_equal date_created.gmtime, post.date_created
     end
 
     def test_write

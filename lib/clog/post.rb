@@ -60,6 +60,8 @@ module Clog
           :link => @raw_data['link'],
           :title => @raw_data['title'],
           :format => @raw_data['mt_convert_breaks'],
+          :date_created => Types::Date.to_ruby(@raw_data['dateCreated']),
+          :tags => @raw_data['mt_keywords'],
           :allows_comments => @raw_data['mt_allow_comments'],
           :allows_pings => @raw_data['mt_allow_pings']
         }
@@ -69,7 +71,7 @@ module Clog
     end
 
     def tags
-      @tags ||= @attributes[:tags].split(" ")
+      @tags ||= @attributes[:tags]
     end
 
     def format
@@ -100,7 +102,7 @@ module Clog
     module Types
       class String
         class << self
-          def to_file(value)
+          def to_native(value)
             value.to_s
           end
           def to_dto(value)
@@ -113,7 +115,7 @@ module Clog
         class << self
           @@file_to_dto = { "On" => 1, "Off" => 0 }
 
-          def to_file(value)
+          def to_native(value)
             verify!(@@file_to_dto.invert[value])
           end
 
@@ -131,13 +133,15 @@ module Clog
       end
 
       class Date
-        def to_file(value)
-          time = value.to_time
-          time.gmtime.strftime("%Y-%m-%d %H:%M:%S GMT")
-        end
+        class << self
+          def to_ruby(value)
+            value.to_time
+          end
 
-        def to_dto(value)
-
+          def to_native(value)
+            time = to_ruby(value)
+            time.gmtime.strftime("%Y-%m-%d %H:%M:%S GMT")
+          end
         end
       end
     end
@@ -202,9 +206,9 @@ module Clog
       io.puts "Link: #{link}"
       io.puts "Post: #{id}"
       io.puts "Title: #{title}"
-      io.puts "Keywords: #{tags.join(" ")}"
+      io.puts "Keywords: #{tags}"
       io.puts "Format: #{format}"
-      io.puts "Date: #{date_created}"
+      io.puts "Date: #{date_created.strftime("%Y-%m-%d %H:%M:%S GMT")}"
       io.puts "Pings: Off"
       io.puts "Comments: On"
       io.puts
