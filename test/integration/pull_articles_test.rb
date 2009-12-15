@@ -21,13 +21,11 @@ class PullArticlesTest < Test::Unit::TestCase
           "permaLink"=>"http://kindermantest.wordpress.com/?p=7",
           "title"=>"Abc",
           "mt_keywords"=>"one two three",
-          "userid"=>"10737850",
           "postid"=>"7",
           "categories"=>["Uncategorized"],
           "link"=>"http://kindermantest.wordpress.com/?p=7",
           "description"=>"I'm the body",
           "dateCreated"=>DateTime.new(2009, 11, 16, 1, 4, 47),
-          "date_created_gmt"=>DateTime.new(2009, 11, 16, 1, 4, 47)
         }
       ]
     end
@@ -50,5 +48,13 @@ class PullArticlesTest < Test::Unit::TestCase
       command = "dump",
       command_args = @@dump_data_path
     ])
+
+    assert_equal true, File.exists?(file_path = @@dump_data_path + "/0007_abc.html")
+    file_contents = File.read(file_path)
+    assert_match /^Title: Abc/, file_contents
+    assert_match /^Post: 7/, file_contents
+    assert_match /^Format: html/, file_contents
+    assert_match /^Pings: Off/, file_contents
+    assert_match /^Comments: On/, file_contents
   end
 end
