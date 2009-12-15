@@ -5,7 +5,6 @@ require 'time'
 
 module Clog
   class PostTest < Test::Unit::TestCase
-    
     def test_that_post_can_be_created_by_attribute_hash
       post = Post.new(params = all_post_params)
       params.each_key do |attr_name|
@@ -21,7 +20,7 @@ module Clog
 
       assert_equal [post], Post.all
     end
-   
+
     def test_that_create_builds_to_post_from_string_data_and_sends_to_client
       #Post.create(
     end
@@ -30,7 +29,7 @@ module Clog
       post_data = metaweblog_post
 
       post = Post.new(post_data)
-      
+
       {
         'postid' => :id,
         'link' => :link,
@@ -43,7 +42,7 @@ module Clog
 
     def test_tags
       post_data = metaweblog_post('mt_keywords' => (tags = "tag1 tag2 tag3"))
-      
+
       post = Post.new(post_data)
 
       assert_equal tags, post.tags
@@ -74,7 +73,7 @@ module Clog
     end
 
     {
-      :allows_comments => 'mt_allow_comments', 
+      :allows_comments => 'mt_allow_comments',
       :allows_pings => 'mt_allow_pings'
     }.each do |attribute, dto_field|
       define_method "test_that_#{attribute}_is_true_from_dto_value" do
@@ -113,14 +112,14 @@ Comments: On
 
 #{post_data['description']}
       s
-      
+
       assert_equal msg, io.string
     end
 
     def test_write_with_file
       tmpfile = Tempfile.new('write_with_file')
       tmpfile.close
-      
+
       post_data = metaweblog_post
       post = Post.new(post_data)
 

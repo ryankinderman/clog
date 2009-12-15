@@ -39,8 +39,8 @@ module Clog
 
     def test_dump
       blog = Blog.new(mock('client'))
-      post = stub('post', 
-        :id => '32', 
+      post = stub('post',
+        :id => '32',
         :title => 'This Rocks',
         :format => "markdown")
       Post.expects(:all).returns([post])

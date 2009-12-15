@@ -1,9 +1,9 @@
 module Clog
   class CommandLine
     class ArgumentError < StandardError; end
-    
+
     class << self
-      
+
       def run(args)
         cmd = nil
         begin
@@ -16,12 +16,12 @@ module Clog
 
         cmd.command.run
       end
-    
+
       def usage
         usage_str =<<-eos
 Syntax: clog [host] [xmlrpc_path] [login] [password] [command] [command_args]
 host            the blog host address (ex: myblog.com)
-xmlrpc_path     the path to your blog's XMLRPC service (currently only 
+xmlrpc_path     the path to your blog's XMLRPC service (currently only
                 metaWeblog)
 login           the login to your blog
 password        the password to your blog
@@ -41,7 +41,7 @@ Commands:
       file      the file containing the article to post
 eos
       end
-    
+
     end
 
     def initialize(args)
@@ -77,7 +77,7 @@ eos
       elsif !command.valid?
         message = command.message
       end
-      
+
       raise ArgumentError, message if message
     end
 

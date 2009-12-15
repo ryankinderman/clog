@@ -34,7 +34,7 @@ module Clog
     end
 
     [
-      :title, 
+      :title,
       :link,
       :body,
       :id,
@@ -77,7 +77,7 @@ module Clog
     def format
       @attributes[:format] || 'html'
     end
-    
+
     def write(target)
       if target.is_a?(String)
         File.open(target, 'w') do |f|
@@ -152,9 +152,9 @@ module Clog
     FIELDS = {
       "Link" => "link",
       "Post" => "postid",
-      "Title" => "title", 
-      "Keywords" => "mt_keywords", 
-      "Format" => "mt_convert_breaks", 
+      "Title" => "title",
+      "Keywords" => "mt_keywords",
+      "Format" => "mt_convert_breaks",
       "Date" => {
         :name => "dateCreated",
         :type => Types::Date
@@ -162,7 +162,7 @@ module Clog
       "Pings" => {
         :name => "mt_allow_pings",
         :type => Types::Boolean
-      }, 
+      },
       "Comments" => {
         :name => "mt_allow_comments",
         :type => Types::Boolean
@@ -187,8 +187,8 @@ module Clog
             field_defn = FIELDS[field_name]
             cnv_field_name = field_defn.is_a?(Hash) ? field_defn[:name] : field_defn
             cnv_field_type = \
-              if (field_defn.is_a?(Hash) and field_defn.include?(:type)) 
-                field_defn[:type] 
+              if (field_defn.is_a?(Hash) and field_defn.include?(:type))
+                field_defn[:type]
               else
                 Types::String
               end
@@ -215,7 +215,7 @@ module Clog
       io.puts "Pings: Off"
       io.puts "Comments: On"
       io.puts
-      io.puts @raw_data["description"]    
+      io.puts @raw_data["description"]
     end
   end
 end
