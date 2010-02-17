@@ -30,8 +30,8 @@ command         the command to run on the blog. See 'Commands' below details.
 command_args    arguments to the given command. See 'Commands' below for details.
 
 Commands:
-  dump [path]
-    dump all blog entries from a blog to a specified directory
+  pull [path]
+    pull all blog entries from a blog to a specified directory
     Arguments:
       path      the path on your local computer that you want to write the blog
                 posts to
@@ -85,7 +85,7 @@ eos
       class << self
         def definitions
           @definitions ||= {
-            :dump => 1,
+            :pull => 1,
             :post => 1
           }
         end

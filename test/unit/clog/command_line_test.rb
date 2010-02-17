@@ -25,7 +25,7 @@ module Clog
     def test_run_with_missing_xmlrpc_args_exits_1_and_provides_usage
       xmlrpc_args = build_xmlrpc_args
       xmlrpc_args.pop
-      dump_args = [
+      pull_args = [
         command = 'command',
         command_arg = 'command_arg'
       ]
@@ -36,7 +36,7 @@ module Clog
       CommandLine.expects(:exit).with(1).raises(HappyExitError)
 
       begin
-        CommandLine.run(xmlrpc_args + dump_args)
+        CommandLine.run(xmlrpc_args + pull_args)
       rescue HappyExitError; end
     end
 
@@ -74,23 +74,23 @@ module Clog
       rescue HappyExitError; end
     end
 
-    def test_run_with_dump
+    def test_run_with_pull
       xmlrpc_args = build_xmlrpc_args
       command_args = [
-        command = 'dump',
-        dump_path = '/path'
+        command = 'pull',
+        pull_path = '/path'
       ]
 
       Client.expects(:new).with(build_connection_parameters(xmlrpc_args)).returns(client = mock("xmlrpc client"))
-      Blog.expects(command).with(client, dump_path)
+      Blog.expects(command).with(client, pull_path)
 
       CommandLine.run(xmlrpc_args + command_args)
     end
 
-    def test_run_with_dump_with_missing_dump_path
+    def test_run_with_pull_with_missing_pull_path
       xmlrpc_args = build_xmlrpc_args
       command_args = [
-        command = 'dump'
+        command = 'pull'
       ]
 
       CommandLine.expects(:exit).with(1).raises(HappyExitError)

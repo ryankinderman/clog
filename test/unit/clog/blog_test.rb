@@ -37,16 +37,16 @@ module Clog
       ))
     end
 
-    def test_dump
+    def test_pull
       blog = Blog.new(mock('client'))
       post = stub('post',
         :id => '32',
         :title => 'This Rocks',
         :format => "markdown")
       Post.expects(:all).returns([post])
-      post.expects(:write).with("#{dump_path = "/some/path"}/0032_this-rocks.markdown")
+      post.expects(:write).with("#{pull_path = "/some/path"}/0032_this-rocks.markdown")
 
-      blog.dump(dump_path)
+      blog.pull(pull_path)
     end
 
     def test_post

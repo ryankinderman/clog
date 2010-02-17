@@ -31,13 +31,13 @@ class PullArticlesTest < Test::Unit::TestCase
     end
   end
 
-  @@dump_data_path = File.expand_path(File.dirname(__FILE__) + "/dump_data")
+  PULL_PATH = File.expand_path(File.dirname(__FILE__) + "/pull_data")
 
   def teardown
-    %x[rm -rf #{@@dump_data_path}/*]
+    %x[rm -rf #{PULL_PATH}/*]
   end
 
-  def test_dump
+  def test_pull
     XMLRPC::Client.stubs(:new).returns(MockXMLRPCClient.new)
 
     Clog::CommandLine.run([
@@ -45,11 +45,11 @@ class PullArticlesTest < Test::Unit::TestCase
       xmlrpc_path = "/xmlrpc",
       login = "testuser",
       password = "testpass",
-      command = "dump",
-      command_args = @@dump_data_path
+      command = "pull",
+      command_args = PULL_PATH
     ])
 
-    assert_equal true, File.exists?(file_path = @@dump_data_path + "/0007_abc.html")
+    assert_equal true, File.exists?(file_path = PULL_PATH + "/0007_abc.html")
     file_contents = File.read(file_path)
     assert_match /^Title: Abc/, file_contents
     assert_match /^Post: 7/, file_contents
