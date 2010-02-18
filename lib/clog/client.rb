@@ -22,7 +22,7 @@ module Clog
     end
 
     def create_post(post)
-      metaweblog_command('metaWeblog.newPost', post.data)
+      metaweblog_command('metaWeblog.newPost', post.raw_data)
     end
 
     private
