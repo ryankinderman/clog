@@ -1,4 +1,9 @@
-- separate FilePost logic from Post
+- separate Post logic from Xmlrpc::Post
+  - Post contains logic for reading and writing clog files
+  - Xmlrpc::Post contains logic to:
+    - write post data to Xmlrpc::Client
+    - read post data from Xmlrpc::Client
+    - convert post data to/from Clog::Post
 - remove duplication of knowledge for metaweblog response
 - work out proper place to create a Post (blog? client?)
 - consolidate usage message and command/argument definition
