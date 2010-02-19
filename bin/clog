@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 require File.expand_path(File.dirname(__FILE__) + "/../init")
 
-Clog::CommandLine.run(ARGV)
+exit 1 unless Clog::CommandLine.run(ARGV)

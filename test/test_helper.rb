@@ -22,6 +22,6 @@ Test::Unit::TestCase.class_eval do
       xmlrpc_path = "/xmlrpc",
       login = "testuser",
       password = "testpass",
-      command] + args)
+      command] + args, StringIO.new)
   end
 end

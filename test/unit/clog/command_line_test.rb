@@ -2,7 +2,9 @@ require File.expand_path(File.join(File.dirname(__FILE__), '/../test_helper'))
 
 module Clog
   class CommandLineTest < Test::Unit::TestCase
-    class HappyExitError < StandardError; end
+    def run_command_line(args, err = StringIO.new)
+      CommandLine.run(args, err)
+    end
 
     def setup
       Client.stubs(:new).returns(client = mock("mock client"))
@@ -19,10 +21,10 @@ module Clog
       Client.expects(:new).with(build_connection_parameters(xmlrpc_args)).returns(client = mock("mock client"))
       Blog.expects(command).with(client, command_arg)
 
-      CommandLine.run(xmlrpc_args + command_args)
+      run_command_line(xmlrpc_args + command_args)
     end
 
-    def test_run_with_missing_xmlrpc_args_exits_1_and_provides_usage
+    def test_run_with_missing_xmlrpc_args_returns_false_and_provides_usage
       xmlrpc_args = build_xmlrpc_args
       xmlrpc_args.pop
       pull_args = [
@@ -30,48 +32,33 @@ module Clog
         command_arg = 'command_arg'
       ]
 
-      CommandLine.expects(:usage).returns(usage_message = "usage message")
-      STDERR.stubs(:puts)
-      STDERR.expects(:puts).at_least_once.with(usage_message)
-      CommandLine.expects(:exit).with(1).raises(HappyExitError)
+      assert_equal false, run_command_line(xmlrpc_args + pull_args, err = StringIO.new)
 
-      begin
-        CommandLine.run(xmlrpc_args + pull_args)
-      rescue HappyExitError; end
+      assert_match /usage/, err.string.downcase
     end
 
-    def test_run_with_missing_command_args_exits_1_and_provides_usage
+    def test_run_with_missing_command_args_returns_false_and_provides_usage
       xmlrpc_args = build_xmlrpc_args
       command_args = [
         command = 'command'
       ]
 
-      CommandLine::Command.stubs(:definitions).returns(:command => 1)
-      CommandLine.expects(:usage).returns(usage_message = "usage message")
-      STDERR.stubs(:puts)
-      STDERR.expects(:puts).at_least_once.with(usage_message)
-      CommandLine.expects(:exit).with(1).raises(HappyExitError)
+      assert_equal false, run_command_line(xmlrpc_args + command_args, err = StringIO.new)
 
-      begin
-        CommandLine.run(xmlrpc_args + command_args)
-      rescue HappyExitError; end
+      assert /too few arguments/, err.string.downcase
+      assert /usage/, err.string.downcase
     end
 
-    def test_run_with_unrecognized_command_exits_1_and_provides_usage
+    def test_run_with_unrecognized_command_returns_false_and_provides_usage
       xmlrpc_args = build_xmlrpc_args
       command_args = [
         command = 'unrecognized'
       ]
 
-      CommandLine::Command.stubs(:definitions).returns(:command => 1)
-      CommandLine.expects(:usage).returns(usage_message = "usage message")
-      STDERR.stubs(:puts)
-      STDERR.expects(:puts).at_least_once.with(usage_message)
-      CommandLine.expects(:exit).with(1).raises(HappyExitError)
+      assert_equal false, run_command_line(xmlrpc_args + command_args, err = StringIO.new)
 
-      begin
-        CommandLine.run(xmlrpc_args + command_args)
-      rescue HappyExitError; end
+      assert_match /unrecognized command/, err.string.downcase
+      assert_match /usage/, err.string.downcase
     end
 
     def test_run_with_pull
@@ -84,7 +71,7 @@ module Clog
       Client.expects(:new).with(build_connection_parameters(xmlrpc_args)).returns(client = mock("xmlrpc client"))
       Blog.expects(command).with(client, pull_path)
 
-      CommandLine.run(xmlrpc_args + command_args)
+      run_command_line(xmlrpc_args + command_args)
     end
 
     def test_run_with_pull_with_missing_pull_path
@@ -93,14 +80,10 @@ module Clog
         command = 'pull'
       ]
 
-      CommandLine.expects(:exit).with(1).raises(HappyExitError)
-      CommandLine.stubs(:usage).returns(usage_message = "usage message")
-      STDERR.stubs(:puts)
-      STDERR.expects(:puts).with(usage_message).at_least_once
+      assert_equal false, run_command_line(xmlrpc_args + command_args, err = StringIO.new)
 
-      begin
-        CommandLine.run(xmlrpc_args + command_args)
-      rescue HappyExitError; end
+      assert_match /too few arguments/, err.string.downcase
+      assert_match /usage/, err.string.downcase
     end
 
     def test_run_with_post
@@ -113,7 +96,7 @@ module Clog
       Client.expects(:new).with(build_connection_parameters(xmlrpc_args)).returns(client = mock("mock client"))
       Blog.expects(command).with(client, file_path)
 
-      CommandLine.run(xmlrpc_args + command_args)
+      run_command_line(xmlrpc_args + command_args)
     end
 
     private
