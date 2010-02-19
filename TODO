@@ -1,3 +1,13 @@
+- CommandLine should:
+  - only interact with Blog
+  - provide the commands 'pull' and 'post'
+  - pass blog client information to Blog
+  - use Blog to fulfill pull/post commands, but not rely on it for:
+    - writing to filesystem
+    - implementing commands pull/post
+- Blog should not exist?
+  - get a Command implementations for CommandLine to use
+  - rely on CommandLine to instantiate XmlRpc client
 - separate Post logic from Xmlrpc::Post
   - Post contains logic for reading and writing clog files
   - Xmlrpc::Post contains logic to:
