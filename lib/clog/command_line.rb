@@ -2,19 +2,21 @@ module Clog
   class CommandLine
     class ArgumentError < StandardError; end
 
+    XMLRPC_ARGS = [:host, :xmlrpc_path, :login, :password]
+
     class << self
 
       def run(args, stderr)
-        cmd = nil
+        cmd_line = nil
         begin
-          cmd = new(args)
+          cmd_line = new(args)
         rescue ArgumentError => e
           stderr.puts e.message
           stderr.puts usage
           return false
         end
 
-        cmd.command.run
+        cmd_line.command.run
         true
       end
 
@@ -72,12 +74,11 @@ eos
 
     def initialize(args)
       @args = args
-      @xmlrpc_args = [:host, :xmlrpc_path, :login, :password]
       validate!
     end
 
     def required_arg_count
-      @xmlrpc_args.size + 1
+      XMLRPC_ARGS.size + 1
     end
 
     def command
@@ -86,7 +87,7 @@ eos
           name = @args[required_arg_count - 1]
           args = @args[required_arg_count..-1]
           i = 0
-          connection_params = @xmlrpc_args.inject({}) { |h, arg_name| h[arg_name] = @args[i]; i += 1; h }
+          connection_params = XMLRPC_ARGS.inject({}) { |h, arg_name| h[arg_name] = @args[i]; i += 1; h }
           client = Client.new(connection_params)
           Post.connection_params = connection_params
 
@@ -118,6 +119,7 @@ eos
       end
 
       def initialize(name, client, args)
+        #@name = (self.name || self.class.name.gsub(/^(.*)Command$/, '\1').downcase).to_sym
         @name = name.to_sym
         @args = args
         @client = client
@@ -142,5 +144,16 @@ eos
         Blog.send @name, @client, *@args
       end
     end
+
+    #class PullCommand < Command
+    #  self.description = "pull all blog articles from a blog to a specified directory"
+    #  define_arguments do |args|
+    #    args.add :path, "the path on your local computer that you want to write the blog posts to"
+    #  end
+
+    #  def run
+    #    Blog.send 
+    #  end
+    #end
   end
 end

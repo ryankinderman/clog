@@ -1,19 +1,30 @@
-- CommandLine should:
-  - only interact with Blog
-  - provide the commands 'pull' and 'post'
-  - pass blog client information to Blog
-  - use Blog to fulfill pull/post commands, but not rely on it for:
-    - writing to filesystem
-    - implementing commands pull/post
-- Blog should not exist?
-  - get a Command implementations for CommandLine to use
-  - rely on CommandLine to instantiate XmlRpc client
-- separate Post logic from Xmlrpc::Post
-  - Post contains logic for reading and writing clog files
-  - Xmlrpc::Post contains logic to:
-    - write post data to Xmlrpc::Client
-    - read post data from Xmlrpc::Client
-    - convert post data to/from Clog::Post
-- remove duplication of knowledge for metaweblog response
 - work out proper place to create a Post (blog? client?)
+  - CommandLine should:
+    - only interact with Blog
+    - provide the commands 'pull' and 'post'
+    - pass blog client information to Blog
+    - use Blog to fulfill pull/post commands, but not rely on it for:
+      - writing to filesystem
+      - implementing commands pull/post
+  - Blog should not exist?
+    - get a Command implementations for CommandLine to use
+    - rely on CommandLine to instantiate XmlRpc client
+  - separate Post logic from Xmlrpc::Post
+    - Post contains logic for reading and writing clog files
+    - Xmlrpc::Post contains logic to:
+      - write post data to Xmlrpc::Client
+      - read post data from Xmlrpc::Client
+      - convert post data to/from Clog::Post
+- remove duplication of knowledge for metaweblog response
 - consolidate usage message and command/argument definition
+- features
+  - write new/empty post
+  - Editor integration
+    - VIM
+    - Emacs
+  - output optionally to stdout
+  - support for blogger api (http://code.google.com/apis/blogger/)
+  - support for LiveJournal API (http://www.livejournal.com/doc/server/ljp.csp.xml-rpc.protocol.html)
+  - support for tumblr api (http://www.tumblr.com/docs/api)
+  x retrieve all posts from blog
+  x post to blog

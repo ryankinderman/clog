@@ -10,6 +10,21 @@ module Clog
       Client.stubs(:new).returns(client = mock("mock client"))
     end
 
+    #def test_run_new
+    #  xmlrpc_args = build_xmlrpc_args
+    #  CommandLine.commands << (command_class = stub("test command", :name => "test"))
+
+    #  command_args = ['command_arg']
+    #  command_class.expects(:new).
+    #    with(xmlrpc_args + command_args).
+    #    returns(command = mock("test command instance", :valid? => true))
+    #  command.expects(:run)
+
+    #  CommandLine.run(
+    #    [command_class.name] + xmlrpc_args + command_args,
+    #    err = StringIO.new)
+    #end
+
     def test_run
       xmlrpc_args = build_xmlrpc_args
       command_args = [
