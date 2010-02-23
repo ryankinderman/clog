@@ -5,6 +5,22 @@ module Clog
     XMLRPC_ARGS = [:host, :xmlrpc_path, :login, :password]
 
     class << self
+      def commands
+        @commands ||= []
+      end
+
+      def run_new(args, errout)
+        command = new_command(command_name = args.shift, args)
+
+        if command.valid?
+          command.run
+          true
+        else
+          errout.puts command.error_message
+          errout.puts usage
+          false
+        end
+      end
 
       def run(args, stderr)
         cmd_line = nil
@@ -53,6 +69,13 @@ Commands:
 eos
       end
 
+
+      private
+
+      def new_command(name, args)
+        command_class = commands.find { |c| c.command_name == name.to_sym }
+        command = command_class.new(args)
+      end
 
       def columnize(arguments, space_between_columns)
         column_width = space_between_columns + arguments.inject(0) { |max, pair| [max, pair.first.length].max }
