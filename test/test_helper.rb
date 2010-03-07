@@ -17,7 +17,7 @@ Test::Unit::TestCase.class_eval do
   private
 
   def run_command(command, *args)
-    Clog::CommandLine.run([
+    Clog::CommandLine::Runner.run([
       host = "example.com",
       xmlrpc_path = "/xmlrpc",
       login = "testuser",
