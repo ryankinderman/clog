@@ -43,21 +43,51 @@ module Clog
         assert_equal description2, subclass2.description
       end
 
-#      def test_is_valid_if_no_arguments_are_required_or_given
-#        subclass = Class.new(Command)
-#        assert_equal true, subclass.new.valid?
-#      end
-#
-      #def test_provides_method_for_defining_arguments_in_subclass
-      #  subclass = Class.new(Command) do
-      #    define_arguments do |args|
-      #      args.add :arg1, "the first argument"
-      #      args.add :arg2, "the second argument"
-      #    end
-      #  end
+      def test_description_of_subclass_defaults_to_description_of_superclass
+        description = nil
 
-      #  assert_equal false, subclass.new([]).valid?
-      #end
+        subclass1 = Class.new(Command) do
+          self.description = (description = "The command1 description")
+        end
+        subclass2 = Class.new(subclass1)
+
+        assert_equal description, subclass2.description
+      end
+
+      def test_is_valid_if_no_arguments_are_required_or_given
+        subclass = Class.new(Command)
+        assert_equal true, subclass.new([]).valid?
+      end
+
+      def test_is_valid_if_one_argument_is_required_and_one_is_given
+        subclass = Class.new(Command) do
+          define_arguments do |args|
+            args.add :arg1
+          end
+        end
+
+        assert_equal true, subclass.new(["1"]).valid?
+      end
+
+      def test_is_not_valid_if_one_argument_is_required_and_none_are_given
+        subclass = Class.new(Command) do
+          define_arguments do |args|
+            args.add :arg1
+          end
+        end
+
+        assert_equal false, subclass.new([]).valid?
+      end
+
+      def test_is_valid_if_one_argument_is_required_and_two_are_given
+        subclass = Class.new(Command) do
+          define_arguments do |args|
+            args.add :arg1
+          end
+        end
+
+        assert_equal true, subclass.new(["1", "2"]).valid?
+      end
     end
   end
 end

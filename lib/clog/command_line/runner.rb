@@ -140,17 +140,40 @@ module Clog
 
     class Command
       class << self
-        attr_reader :description
+        def description
+          read_inheritable_attribute(:description)
+        end
+
+        def arguments
+          read_inheritable_attribute(:arguments)
+        end
 
         protected
 
-        attr_reader :args_builder
-        attr_writer :description
+        def description=(value)
+          write_inheritable_attribute(:description, value)
+        end
 
         def define_arguments
-          @args_builder = ArgumentsBuilder.new
-          yield @args_builder
+          write_inheritable_attribute(:arguments, arguments = ArgumentsBuilder.new)
+          yield arguments if block_given?
         end
+      end
+
+      define_arguments
+
+      def initialize(argument_values)
+        @argument_values = argument_values
+      end
+
+      def valid?
+        @argument_values.size >= arguments.size
+      end
+
+      private
+
+      def arguments
+        self.class.arguments
       end
     end
 
@@ -193,8 +216,9 @@ module Clog
 
     class PullCommand < Command
       self.description = "pull all blog articles from a blog to a specified directory"
-    #  define_arguments do |args|
-    #    args.add :path, "the path on your local computer that you want to write the blog posts to"
+      define_arguments do |args|
+        args.add :path #, "the path on your local computer that you want to write the blog posts to"
       end
+    end
   end
 end
