@@ -140,11 +140,23 @@ module Clog
 
     class Command
       class << self
+        attr_reader :description
+
         def definitions
           @definitions ||= {
             :pull => 1,
             :post => 1
           }
+        end
+
+        protected
+
+        attr_reader :args_builder
+        attr_writer :description
+
+        def define_arguments
+          @args_builder = ArgumentsBuilder.new
+          yield @args_builder
         end
       end
 
@@ -175,10 +187,10 @@ module Clog
       end
     end
 
-    #class PullCommand < Command
-    #  self.description = "pull all blog articles from a blog to a specified directory"
+    class PullCommand < Command
+      self.description = "pull all blog articles from a blog to a specified directory"
     #  define_arguments do |args|
     #    args.add :path, "the path on your local computer that you want to write the blog posts to"
-    #  end
+      end
   end
 end
