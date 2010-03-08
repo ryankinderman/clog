@@ -115,7 +115,7 @@ module Clog
             client = Client.new(connection_params)
             Post.connection_params = connection_params
 
-            Command.new(name, client, args)
+            OldCommand.new(name, client, args)
           end
       end
 
@@ -142,13 +142,6 @@ module Clog
       class << self
         attr_reader :description
 
-        def definitions
-          @definitions ||= {
-            :pull => 1,
-            :post => 1
-          }
-        end
-
         protected
 
         attr_reader :args_builder
@@ -157,6 +150,17 @@ module Clog
         def define_arguments
           @args_builder = ArgumentsBuilder.new
           yield @args_builder
+        end
+      end
+    end
+
+    class OldCommand
+      class << self
+        def definitions
+          @definitions ||= {
+            :pull => 1,
+            :post => 1
+          }
         end
       end
 

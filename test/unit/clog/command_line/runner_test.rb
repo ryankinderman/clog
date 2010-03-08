@@ -33,7 +33,7 @@ module Clog
           command_arg = 'command_arg'
         ]
 
-        Command.stubs(:definitions).returns({command.to_sym => 1})
+        OldCommand.stubs(:definitions).returns({command.to_sym => 1})
         Client.expects(:new).with(build_connection_parameters(xmlrpc_args)).returns(client = mock("mock client"))
         Blog.expects(command).with(client, command_arg)
 
