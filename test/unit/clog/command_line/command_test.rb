@@ -6,7 +6,7 @@ module Clog
       def test_description_can_be_set_by_subclass
         description = nil
 
-        subclass = Class.new(Command) do
+        subclass = create_subclass(Command) do
           self.description = (description = "The command description")
         end
 
@@ -17,10 +17,10 @@ module Clog
         description1 = nil
         description2 = nil
 
-        subclass1 = Class.new(Command) do
+        subclass1 = create_subclass(Command) do
           self.description = (description1 = "The command1 description")
         end
-        subclass2 = Class.new(Command) do
+        subclass2 = create_subclass(Command) do
           self.description = (description2 = "The command2 description")
         end
 
@@ -32,10 +32,10 @@ module Clog
         description1 = nil
         description2 = nil
 
-        subclass1 = Class.new(Command) do
+        subclass1 = create_subclass(Command) do
           self.description = (description1 = "The command1 description")
         end
-        subclass2 = Class.new(subclass1) do
+        subclass2 = create_subclass(subclass1) do
           self.description = (description2 = "The command2 description")
         end
 
@@ -46,7 +46,7 @@ module Clog
       def test_description_of_subclass_defaults_to_description_of_superclass
         description = nil
 
-        subclass1 = Class.new(Command) do
+        subclass1 = create_subclass(Command) do
           self.description = (description = "The command1 description")
         end
         subclass2 = Class.new(subclass1)
@@ -55,12 +55,12 @@ module Clog
       end
 
       def test_is_valid_if_no_arguments_are_required_or_given
-        subclass = Class.new(Command)
+        subclass = create_subclass(Command)
         assert_equal true, subclass.new([]).valid?
       end
 
       def test_is_valid_if_one_argument_is_required_and_one_is_given
-        subclass = Class.new(Command) do
+        subclass = create_subclass(Command) do
           define_arguments do |args|
             args.add :arg1
           end
@@ -70,7 +70,7 @@ module Clog
       end
 
       def test_is_not_valid_if_one_argument_is_required_and_none_are_given
-        subclass = Class.new(Command) do
+        subclass = create_subclass(Command) do
           define_arguments do |args|
             args.add :arg1
           end
@@ -80,13 +80,21 @@ module Clog
       end
 
       def test_is_valid_if_one_argument_is_required_and_two_are_given
-        subclass = Class.new(Command) do
+        subclass = create_subclass(Command) do
           define_arguments do |args|
             args.add :arg1
           end
         end
 
         assert_equal true, subclass.new(["1", "2"]).valid?
+      end
+
+      private
+
+      def create_subclass(superclass, &defn)
+        subclass = Class.new(superclass)
+        subclass.class_eval &defn unless defn.nil?
+        subclass
       end
     end
   end
