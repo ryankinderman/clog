@@ -10,6 +10,7 @@ module Clog
 
         assert_equal false, cmd.valid?
       end
+
     end
   end
 end

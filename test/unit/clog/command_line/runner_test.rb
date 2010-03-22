@@ -26,6 +26,21 @@ module Clog
           err = StringIO.new)
       end
 
+      #def test_run_new_responds_with_errors_when_command_is_not_recognized
+      #  xmlrpc_args = build_xmlrpc_args
+      #  Runner.commands << (command_class = stub("test command", :command_name => :test))
+
+      #  command_args = ['command_arg']
+      #  command_class.expects(:new).
+      #    with(xmlrpc_args + command_args).
+      #    returns(command = mock("test command instance", :valid? => true))
+      #  command.expects(:run)
+
+      #  Runner.run_new(
+      #    [command_class.command_name] + xmlrpc_args + command_args,
+      #    err = StringIO.new)
+      #end
+
       def test_run
         xmlrpc_args = build_xmlrpc_args
         command_args = [

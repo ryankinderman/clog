@@ -54,6 +54,11 @@ module Clog
         assert_equal description, subclass2.description
       end
 
+      def test_command_name_generated_automatically_from_class_name
+        subclass = create_subclass(Command, "BlahCommand")
+        assert_equal "blah", subclass.command_name
+      end
+
       def test_is_valid_if_no_additional_arguments_are_required_or_given
         subclass = create_subclass(Command)
         assert_equal true, subclass.new(base_arguments).valid?
@@ -101,8 +106,9 @@ module Clog
         ["kinderman.net", "/xmlrpc/path", "login", "password"]
       end
 
-      def create_subclass(superclass, &defn)
+      def create_subclass(superclass, class_name = nil, &defn)
         subclass = Class.new(superclass)
+        subclass = self.class.const_set(class_name, subclass) unless class_name.nil?
         subclass.class_eval &defn unless defn.nil?
         subclass
       end

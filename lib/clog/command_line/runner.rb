@@ -148,6 +148,10 @@ module Clog
           read_inheritable_attribute(:arguments)
         end
 
+        def command_name
+          name.gsub(/^([^:]+::)*([^:]+)Command$/, '\2').downcase
+        end
+
         protected
 
         def description=(value)
