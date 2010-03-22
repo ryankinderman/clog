@@ -13,6 +13,10 @@ module Clog
 
       private
 
+      def initialize_copy(other)
+        @args_list = other.instance_variable_get(:@args_list).dup
+      end
+
       def args_list
         @args_list ||= []
       end

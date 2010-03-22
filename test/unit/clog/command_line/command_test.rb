@@ -54,42 +54,52 @@ module Clog
         assert_equal description, subclass2.description
       end
 
-      def test_is_valid_if_no_arguments_are_required_or_given
+      def test_is_valid_if_no_additional_arguments_are_required_or_given
         subclass = create_subclass(Command)
-        assert_equal true, subclass.new([]).valid?
+        assert_equal true, subclass.new(base_arguments).valid?
       end
 
-      def test_is_valid_if_one_argument_is_required_and_one_is_given
+      def test_is_valid_if_one_additional_argument_is_required_and_one_is_given
         subclass = create_subclass(Command) do
           define_arguments do |args|
             args.add :arg1
           end
         end
 
-        assert_equal true, subclass.new(["1"]).valid?
+        assert_equal true, subclass.new(base_arguments + ["1"]).valid?
       end
 
-      def test_is_not_valid_if_one_argument_is_required_and_none_are_given
+      def test_is_not_valid_if_one_additional_argument_is_required_and_none_are_given
         subclass = create_subclass(Command) do
           define_arguments do |args|
             args.add :arg1
           end
         end
+
+        assert_equal false, subclass.new(base_arguments).valid?
+      end
+
+      def test_is_valid_if_one_additional_argument_is_required_and_two_are_given
+        subclass = create_subclass(Command) do
+          define_arguments do |args|
+            args.add :arg1
+          end
+        end
+
+        assert_equal true, subclass.new(base_arguments + ["1", "2"]).valid?
+      end
+
+      def test_is_not_valid_without_at_least_providing_the_base_number_of_arguments
+        subclass = create_subclass(Command)
 
         assert_equal false, subclass.new([]).valid?
       end
 
-      def test_is_valid_if_one_argument_is_required_and_two_are_given
-        subclass = create_subclass(Command) do
-          define_arguments do |args|
-            args.add :arg1
-          end
-        end
-
-        assert_equal true, subclass.new(["1", "2"]).valid?
-      end
-
       private
+
+      def base_arguments
+        ["kinderman.net", "/xmlrpc/path", "login", "password"]
+      end
 
       def create_subclass(superclass, &defn)
         subclass = Class.new(superclass)

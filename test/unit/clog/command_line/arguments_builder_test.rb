@@ -16,6 +16,16 @@ module Clog
 
         assert_equal 0, builder.size
       end
+
+      def test_dup_dups_args_list
+        builder = ArgumentsBuilder.new
+
+        builder.add :arg1
+        builder_copy = builder.dup
+        builder_copy.add :arg2
+
+        assert_equal 1, builder.size
+      end
     end
   end
 end

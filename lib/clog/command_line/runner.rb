@@ -155,12 +155,17 @@ module Clog
         end
 
         def define_arguments
-          write_inheritable_attribute(:arguments, arguments = ArgumentsBuilder.new)
+          write_inheritable_attribute(:arguments, ArgumentsBuilder.new) if arguments.nil?
           yield arguments if block_given?
         end
       end
 
-      define_arguments
+      define_arguments do |args|
+        args.add :host
+        args.add :xmlrpc_path
+        args.add :login
+        args.add :password
+      end
 
       def initialize(argument_values)
         @argument_values = argument_values
