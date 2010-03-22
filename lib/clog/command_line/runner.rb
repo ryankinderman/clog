@@ -74,7 +74,7 @@ module Clog
         private
 
         def new_command(name, args)
-          command_class = commands.find { |c| c.command_name == name.to_sym }
+          command_class = commands.find { |c| c.command_name == name.to_sym } || UnrecognizedCommand
           command = command_class.new(args)
         end
 

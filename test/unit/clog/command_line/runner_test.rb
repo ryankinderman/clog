@@ -9,6 +9,7 @@ module Clog
 
       def setup
         Client.stubs(:new).returns(client = mock("mock client"))
+        Runner.commands.clear
       end
 
       def test_run_new
@@ -26,20 +27,18 @@ module Clog
           err = StringIO.new)
       end
 
-      #def test_run_new_responds_with_errors_when_command_is_not_recognized
-      #  xmlrpc_args = build_xmlrpc_args
-      #  Runner.commands << (command_class = stub("test command", :command_name => :test))
+      def test_run_new_responds_with_errors_when_command_is_not_recognized
+        UnrecognizedCommand.expects(:new).returns(unrecognized = mock(
+          "unrecognized command",
+          :valid? => false,
+          :error_message => "whatevs"))
 
-      #  command_args = ['command_arg']
-      #  command_class.expects(:new).
-      #    with(xmlrpc_args + command_args).
-      #    returns(command = mock("test command instance", :valid? => true))
-      #  command.expects(:run)
+        Runner.run_new(
+          ["no_such_command"],
+          err = StringIO.new)
 
-      #  Runner.run_new(
-      #    [command_class.command_name] + xmlrpc_args + command_args,
-      #    err = StringIO.new)
-      #end
+        assert_match /whatevs/, err.string
+      end
 
       def test_run
         xmlrpc_args = build_xmlrpc_args
