@@ -7,7 +7,7 @@ module Clog
 
       class << self
         def commands
-          @commands ||= []
+          @commands ||= [PullCommand]
         end
 
         def run_new(args, errout)
@@ -74,8 +74,12 @@ module Clog
         private
 
         def new_command(name, args)
-          command_class = commands.find { |c| c.command_name == name.to_sym } || UnrecognizedCommand
-          command = command_class.new(args)
+          command_class = commands.find { |c| c.command_name == name }
+          if command_class.nil?
+            UnrecognizedCommand.new(name)
+          else
+            command_class.new(args)
+          end
         end
 
         def columnize(arguments, space_between_columns)

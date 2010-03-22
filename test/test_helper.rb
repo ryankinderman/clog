@@ -18,10 +18,10 @@ Test::Unit::TestCase.class_eval do
 
   def run_command(command, *args)
     Clog::CommandLine::Runner.run_new([
+      command,
       host = "example.com",
       xmlrpc_path = "/xmlrpc",
       login = "testuser",
-      password = "testpass",
-      command] + args, StringIO.new)
+      password = "testpass"] + args, @errorio = StringIO.new)
   end
 end
