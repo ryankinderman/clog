@@ -41,10 +41,17 @@ module Clog
         @argument_values.size >= arguments.size
       end
 
-      private
+      protected
 
       def arguments
-        self.class.arguments
+        if @arguments.nil?
+          @arguments = {}
+          [self.class.arguments.size, @argument_values.size].min.times do |i|
+            @arguments[self.class.arguments[i].name] = @argument_values[i]
+          end
+        end
+
+        @arguments
       end
     end
   end

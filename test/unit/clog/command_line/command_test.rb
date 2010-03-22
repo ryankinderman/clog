@@ -100,6 +100,17 @@ module Clog
         assert_equal false, subclass.new([]).valid?
       end
 
+      def test_arguments_are_accessible_by_name
+        subclass = create_subclass(Command) do
+          define_arguments do |args|
+            args.add :arg1
+          end
+        end
+
+        assert_equal "first arg", subclass.new(base_arguments + ["first arg"]).send(:arguments)[:arg1]
+      end
+
+
       private
 
       def base_arguments

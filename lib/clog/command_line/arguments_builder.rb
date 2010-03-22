@@ -7,6 +7,10 @@ module Clog
         args_list << OpenStruct.new(:name => name)
       end
 
+      def [](index)
+        @args_list[index]
+      end
+
       def size
         args_list.size
       end

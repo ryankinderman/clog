@@ -26,6 +26,14 @@ module Clog
 
         assert_equal 1, builder.size
       end
+
+      def test_ordered_element_accessor
+        builder = ArgumentsBuilder.new
+
+        builder.add :arg1
+
+        assert_equal :arg1, builder[0].name
+      end
     end
   end
 end
