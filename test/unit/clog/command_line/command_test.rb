@@ -110,6 +110,18 @@ module Clog
         assert_equal "first arg", subclass.new(base_arguments + ["first arg"]).send(:arguments)[:arg1]
       end
 
+      def test_initialization_sets_post_connection_params
+        subclass = create_subclass(Command)
+        arguments = base_arguments.dup
+        named_arguments = Command.arguments.inject({}) do |h,arg_def|
+          h[arg_def.name] = arguments.shift
+          h
+        end
+        Post.expects(:connection_params=).with(named_arguments)
+
+        cmd = subclass.new(base_arguments)
+      end
+
 
       private
 

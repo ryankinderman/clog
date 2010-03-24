@@ -34,6 +34,19 @@ module Clog
 
         assert_equal :arg1, builder[0].name
       end
+
+      def test_each_yields_for_each_argument_definition
+        builder = ArgumentsBuilder.new
+        builder.add :arg1
+        builder.add :arg2
+        args = []
+
+        builder.each do |arg|
+          args << arg.name
+        end
+
+        assert_equal [:arg1, :arg2], args
+      end
     end
   end
 end

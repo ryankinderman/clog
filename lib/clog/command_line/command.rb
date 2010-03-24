@@ -35,11 +35,15 @@ module Clog
 
       def initialize(argument_values)
         @argument_values = argument_values
+        if valid?
+          Post.connection_params = arguments.slice(:host, :xmlrpc_path, :login, :password)
+        end
       end
 
       def valid?
-        @argument_values.size >= arguments.size
+        @valid ||= (@argument_values.size >= self.class.arguments.size)
       end
+
 
       protected
 

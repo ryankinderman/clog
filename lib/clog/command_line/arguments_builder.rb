@@ -3,12 +3,18 @@ require 'ostruct'
 module Clog
   module CommandLine
     class ArgumentsBuilder
+      include Enumerable
+
       def add(name)
         args_list << OpenStruct.new(:name => name)
       end
 
+      def each
+        args_list.each { |arg| yield arg }
+      end
+
       def [](index)
-        @args_list[index]
+        args_list[index]
       end
 
       def size
