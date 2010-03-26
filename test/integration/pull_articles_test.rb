@@ -1,7 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + "/../test_helper")
 
 class PullArticlesTest < Test::Unit::TestCase
-
   class MockXMLRPCClient
     class DateTime
       def initialize(year, month, day, hour, min, sec)
@@ -47,6 +46,17 @@ class PullArticlesTest < Test::Unit::TestCase
     assert_match /^Format: html/, file_contents
     assert_match /^Pings: Off/, file_contents
     assert_match /^Comments: On/, file_contents
+  end
+
+  private
+
+  def run_command(command, *args)
+    Clog::CommandLine::Runner.run_new([
+      command,
+      host = "example.com",
+      xmlrpc_path = "/xmlrpc",
+      login = "testuser",
+      password = "testpass"] + args, @errorio = StringIO.new)
   end
 
 end
