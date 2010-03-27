@@ -48,15 +48,4 @@ class PullArticlesTest < Test::Unit::TestCase
     assert_match /^Comments: On/, file_contents
   end
 
-  private
-
-  def run_command(command, *args)
-    Clog::CommandLine::Runner.run_new([
-      command,
-      host = "example.com",
-      xmlrpc_path = "/xmlrpc",
-      login = "testuser",
-      password = "testpass"] + args, @errorio = StringIO.new)
-  end
-
 end

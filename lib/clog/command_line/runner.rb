@@ -7,7 +7,7 @@ module Clog
 
       class << self
         def commands
-          @commands ||= [PullCommand]
+          @commands ||= [PullCommand, PostCommand]
         end
 
         def run_new(args, errout)

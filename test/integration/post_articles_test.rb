@@ -31,6 +31,7 @@ EOF
 
     begin
       run_command("post", file)
+      #puts @errorio.string
     ensure
       File.delete(file)
     end
