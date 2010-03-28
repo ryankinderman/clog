@@ -12,7 +12,7 @@ module Clog
         Runner.commands.clear
       end
 
-      def test_run_new
+      def test_run
         xmlrpc_args = build_xmlrpc_args
         Runner.commands << (command_class = stub("test command", :command_name => :test))
 
@@ -22,111 +22,26 @@ module Clog
           returns(command = mock("test command instance", :valid? => true))
         command.expects(:run)
 
-        Runner.run_new(
+        response = Runner.run(
           [command_class.command_name] + xmlrpc_args + command_args,
           err = StringIO.new)
+
+        assert_equal true, response
       end
 
-      def test_run_new_responds_with_errors_when_command_is_not_recognized
-        UnrecognizedCommand.expects(:new).returns(unrecognized = mock(
-          "unrecognized command",
+      def test_run_responds_with_error_message_and_usage_and_returns_false_when_command_is_not_valid
+        UnrecognizedCommand.expects(:new).returns(invalid = mock(
+          "invalid command",
           :valid? => false,
-          :error_message => "whatevs"))
+          :error_message => "something went wrong"))
 
-        Runner.run_new(
-          ["no_such_command"],
+        response = Runner.run(
+          ["blah"],
           err = StringIO.new)
 
-        assert_match /whatevs/, err.string
-      end
-
-      def test_run
-        xmlrpc_args = build_xmlrpc_args
-        command_args = [
-          command = 'command',
-          command_arg = 'command_arg'
-        ]
-
-        OldCommand.stubs(:definitions).returns({command.to_sym => 1})
-        Client.expects(:new).with(build_connection_parameters(xmlrpc_args)).returns(client = mock("mock client"))
-        Blog.expects(command).with(client, command_arg)
-
-        run_command_line(xmlrpc_args + command_args)
-      end
-
-      def test_run_with_missing_xmlrpc_args_returns_false_and_provides_usage
-        xmlrpc_args = build_xmlrpc_args
-        xmlrpc_args.pop
-        pull_args = [
-          command = 'command',
-          command_arg = 'command_arg'
-        ]
-
-        assert_equal false, run_command_line(xmlrpc_args + pull_args, err = StringIO.new)
-
+        assert_match /something went wrong/, err.string
         assert_match /usage/, err.string.downcase
-      end
-
-      def test_run_with_missing_command_args_returns_false_and_provides_usage
-        xmlrpc_args = build_xmlrpc_args
-        command_args = [
-          command = 'command'
-        ]
-
-        assert_equal false, run_command_line(xmlrpc_args + command_args, err = StringIO.new)
-
-        assert /too few arguments/, err.string.downcase
-        assert /usage/, err.string.downcase
-      end
-
-      def test_run_with_unrecognized_command_returns_false_and_provides_usage
-        xmlrpc_args = build_xmlrpc_args
-        command_args = [
-          command = 'unrecognized'
-        ]
-
-        assert_equal false, run_command_line(xmlrpc_args + command_args, err = StringIO.new)
-
-        assert_match /unrecognized command/, err.string.downcase
-        assert_match /usage/, err.string.downcase
-      end
-
-      def test_run_with_pull
-        xmlrpc_args = build_xmlrpc_args
-        command_args = [
-          command = 'pull',
-          pull_path = '/path'
-        ]
-
-        Client.expects(:new).with(build_connection_parameters(xmlrpc_args)).returns(client = mock("xmlrpc client"))
-        Blog.expects(command).with(client, pull_path)
-
-        run_command_line(xmlrpc_args + command_args)
-      end
-
-      def test_run_with_pull_with_missing_pull_path
-        xmlrpc_args = build_xmlrpc_args
-        command_args = [
-          command = 'pull'
-        ]
-
-        assert_equal false, run_command_line(xmlrpc_args + command_args, err = StringIO.new)
-
-        assert_match /too few arguments/, err.string.downcase
-        assert_match /usage/, err.string.downcase
-      end
-
-      def test_run_with_post
-        xmlrpc_args = build_xmlrpc_args
-        command_args = [
-          command = 'post',
-          file_path = '/path/to/file'
-        ]
-
-        Client.expects(:new).with(build_connection_parameters(xmlrpc_args)).returns(client = mock("mock client"))
-        Blog.expects(command).with(client, file_path)
-
-        run_command_line(xmlrpc_args + command_args)
+        assert_equal false, response
       end
 
       private

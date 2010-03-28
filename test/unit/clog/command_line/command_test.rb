@@ -81,7 +81,10 @@ module Clog
           end
         end
 
-        assert_equal false, subclass.new(base_arguments).valid?
+        command = subclass.new(base_arguments)
+
+        assert_equal false, command.valid?
+        assert_not_nil command.error_message
       end
 
       def test_is_valid_if_one_additional_argument_is_required_and_two_are_given
@@ -97,7 +100,10 @@ module Clog
       def test_is_not_valid_without_at_least_providing_the_base_number_of_arguments
         subclass = create_subclass(Command)
 
-        assert_equal false, subclass.new([]).valid?
+        command = subclass.new([])
+
+        assert_equal false, command.valid?
+        assert_not_nil command.error_message
       end
 
       def test_arguments_are_accessible_by_name

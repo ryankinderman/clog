@@ -10,7 +10,7 @@ module Clog
           @commands ||= [PullCommand, PostCommand]
         end
 
-        def run_new(args, errout)
+        def run(args, errout)
           command = new_command(command_name = args.shift, args)
 
           if command.valid?
@@ -21,20 +21,6 @@ module Clog
             errout.puts usage
             false
           end
-        end
-
-        def run(args, stderr)
-          cmd_line = nil
-          begin
-            cmd_line = new(args)
-          rescue ArgumentError => e
-            stderr.puts e.message
-            stderr.puts usage
-            return false
-          end
-
-          cmd_line.command.run
-          true
         end
 
         def usage
@@ -100,83 +86,6 @@ module Clog
 
       end
 
-      def initialize(args)
-        @args = args
-        validate!
-      end
-
-      def required_arg_count
-        XMLRPC_ARGS.size + 1
-      end
-
-      def command
-        @command ||= \
-          begin
-            name = @args[required_arg_count - 1]
-            args = @args[required_arg_count..-1]
-            i = 0
-            connection_params = XMLRPC_ARGS.inject({}) { |h, arg_name| h[arg_name] = @args[i]; i += 1; h }
-            client = Client.new(connection_params)
-            Post.connection_params = connection_params
-
-            OldCommand.new(name, client, args)
-          end
-      end
-
-      private
-
-      def validate!
-        message = nil
-        if @args.size < required_arg_count
-          message = "Too few arguments"
-        elsif !command.valid?
-          message = command.message
-        end
-
-        raise ArgumentError, message if message
-      end
-
-      #  def run
-      #    Blog.send 
-      #  end
-      #end
-    end
-
-    class OldCommand
-      class << self
-        def definitions
-          @definitions ||= {
-            :pull => 1,
-            :post => 1
-          }
-        end
-      end
-
-      def initialize(name, client, args)
-        #@name = (self.name || self.class.name.gsub(/^(.*)Command$/, '\1').downcase).to_sym
-        @name = name.to_sym
-        @args = args
-        @client = client
-      end
-
-      def valid?
-        definitions = self.class.definitions
-        if !definitions.include?(@name)
-          @message = "Unrecognized command: #{@name}"
-        elsif @args.size < (required_arg_count = definitions[@name])
-          @message = "Too few arguments for #{@name}"
-        end
-
-        @message.nil?
-      end
-
-      def message
-        @message
-      end
-
-      def run
-        Blog.send @name, @client, *@args
-      end
     end
   end
 end
