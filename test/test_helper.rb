@@ -23,11 +23,5 @@ Test::Unit::TestCase.class_eval do
       xmlrpc_path = "/xmlrpc",
       login = "testuser",
       password = "testpass"] + args, @errorio = StringIO.new)
-    #Clog::CommandLine::Runner.run_new([
-    #  host = "example.com",
-    #  xmlrpc_path = "/xmlrpc",
-    #  login = "testuser",
-    #  password = "testpass",
-    #  command] + args, StringIO.new)
   end
 end
