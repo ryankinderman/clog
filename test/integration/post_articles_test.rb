@@ -6,6 +6,7 @@ class PostArticleTest < Test::Unit::TestCase
 Title: #{title = 'Abc'}
 Keywords: #{keywords = 'one two three'}
 Format: #{format = 'markdown'}
+Date: #{date_created = "2010-04-05 04:20:00 GMT"}
 Pings: Off
 Comments: On
 
@@ -14,6 +15,7 @@ EOF
 )
 
     XMLRPC::Client.stubs(:new).returns(client = mock("xmlrpc client"))
+    t = Time.parse(date_created)
     client.expects(:call).with(
       'metaWeblog.newPost', 1, 'testuser', 'testpass',
       {
@@ -22,6 +24,7 @@ EOF
         'title' => title,
         'mt_convert_breaks' => format,
         'mt_keywords' => keywords,
+        'dateCreated' => XMLRPC::DateTime.new(t.year, t.mon, t.day, t.hour, t.min, t.sec),
         'description' => body
       }
     )
@@ -29,41 +32,6 @@ EOF
     begin
       run_command("post", file)
       #puts @errorio.string
-    ensure
-      File.delete(file)
-    end
-  end
-
-  def test_post_updated_article
-    file = write_file(<<-EOF
-Link: http://kindermantest.wordpress.com/?p=9
-Post: 9
-Title: #{title = "New Awesome Post"}
-Keywords: #{keywords = "new awesome"}
-Format: #{format = "html"}
-Date: 2010-04-05 04:20:00 GMT
-Pings: Off
-Comments: On
-
-#{body = "Blah blah new body.  This is such an awesome post."}
-EOF
-)
-
-    XMLRPC::Client.stubs(:new).returns(client = mock("xmlrpc client"))
-    client.expects(:call).with(
-      'metaWeblog.newPost', 1, 'testuser', 'testpass',
-      {
-        'mt_allow_comments' => 1,
-        'mt_allow_pings' => 0,
-        'title' => title,
-        'mt_convert_breaks' => format,
-        'mt_keywords' => keywords,
-        'description' => body
-      }
-    )
-
-    begin
-      run_command("post", file)
     ensure
       File.delete(file)
     end

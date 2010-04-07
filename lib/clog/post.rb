@@ -141,6 +141,11 @@ module Clog
             value.to_time
           end
 
+          def to_dto(value)
+            time = Time.parse(value)
+            XMLRPC::DateTime.new(time.year, time.mon, time.day, time.hour, time.min, time.sec)
+          end
+
           def to_native(value)
             time = to_ruby(value)
             time.gmtime.strftime("%Y-%m-%d %H:%M:%S GMT")
