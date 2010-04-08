@@ -128,7 +128,6 @@ module Clog
         cmd = subclass.new(base_arguments)
       end
 
-
       private
 
       def base_arguments

@@ -3,12 +3,28 @@ require File.expand_path(File.join(File.dirname(__FILE__), '/../../test_helper')
 module Clog
   module CommandLine
     class ArgumentsBuilderTest < Test::Unit::TestCase
-      def test_provides_count_of_arguments
+      def test_can_add_argument
         builder = ArgumentsBuilder.new
 
         builder.add :arg1
 
         assert_equal 1, builder.size
+      end
+
+      def test_add_returns_newly_created_argument
+        builder = ArgumentsBuilder.new
+
+        argument = builder.add :arg1
+
+        assert_equal :arg1, argument.name
+      end
+
+      def test_add_takes_an_argument_description
+        builder = ArgumentsBuilder.new
+
+        argument = builder.add :arg1, "Some description"
+
+        assert_equal "Some description", argument.description
       end
 
       def test_allows_zero_arguments
@@ -47,6 +63,7 @@ module Clog
 
         assert_equal [:arg1, :arg2], args
       end
+
     end
   end
 end

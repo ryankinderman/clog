@@ -5,8 +5,10 @@ module Clog
     class ArgumentsBuilder
       include Enumerable
 
-      def add(name)
-        args_list << OpenStruct.new(:name => name)
+      def add(name, description = "")
+        argument = OpenStruct.new(:name => name, :description => description)
+        args_list << argument
+        argument
       end
 
       def each

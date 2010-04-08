@@ -44,6 +44,10 @@ module Clog
         assert_equal false, response
       end
 
+      def test_usage
+        assert_not_nil Runner.usage
+      end
+
       private
 
       def build_xmlrpc_args

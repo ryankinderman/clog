@@ -24,12 +24,9 @@ module Clog
         end
 
         def usage
-          arguments = blog_arguments = [
-            ["host", "the blog host address (ex: myblog.com)"],
-            ["xmlrpc_path", "the path to your blog's XMLRPC service (currently only metaWeblog)"],
-            ["login", "the login to your blog"],
-            ["password", "the password to your blog"]
-          ]
+          arguments = blog_arguments = CommandLine::Command.arguments.collect do |argument|
+            [argument.name.to_s, argument.description]
+          end
 
           arguments += command_line_arguments = [
             ["command", "the command to run on the blog. See 'Commands' below for details."],

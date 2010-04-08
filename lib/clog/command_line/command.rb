@@ -27,10 +27,10 @@ module Clog
       end
 
       define_arguments do |args|
-        args.add :host
-        args.add :xmlrpc_path
-        args.add :login
-        args.add :password
+        args.add :host, "the blog host address (ex: myblog.com)"
+        args.add :xmlrpc_path, "the path to your blog's XMLRPC service (currently only metaWeblog)"
+        args.add :login, "the login to your blog"
+        args.add :password, "the password to your blog"
       end
 
       def initialize(argument_values)
