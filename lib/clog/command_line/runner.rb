@@ -24,12 +24,13 @@ module Clog
         end
 
         def usage
-          arguments = blog_arguments = CommandLine::Command.arguments.collect do |argument|
+          arguments = [
+            ["command", "the command to run on the blog. See 'Commands' below for details."]
+          ]
+          arguments += blog_arguments = CommandLine::Command.arguments.collect do |argument|
             [argument.name.to_s, argument.description]
           end
-
-          arguments += command_line_arguments = [
-            ["command", "the command to run on the blog. See 'Commands' below for details."],
+          arguments += [
             ["command_args", "arguments to the given command. See 'Commands' below for details."]
           ]
 
@@ -39,18 +40,27 @@ module Clog
 
           usage_str += columnize(arguments, 4)
 
-          usage_str += "\n"*2 + <<-eos
-  Commands:
-    pull [path]
-      pull all blog entries from a blog to a specified directory
-      Arguments:
-        path      the path on your local computer that you want to write the blog
-                  posts to
-    post [file]
-      post a blog entry
-      Arguments
-        file      the file containing the article to post
-  eos
+          usage_str += "\n\n\n  Commands:"
+
+          s = ["    "]
+          commands.each do |command|
+            arguments = command.arguments.to_a - Command.arguments.to_a
+            usage_str += "\n\n#{s.join}#{command.command_name} (#{arguments.collect { |a| "[#{a.name}]" }.join(" ")})\n"
+            usage_str += "#{s.join}  #{command.description}\n"
+            usage_str += "#{s.join}  Arguments:"
+            usage_str += columnize(arguments.collect { |a| ["#{s.join}    " + a.name.to_s, a.description] }, 5)
+          end
+
+          usage_str
+#    pull [path]
+#      pull all blog entries from a blog to a specified directory
+#      Arguments:
+#        path      the path on your local computer that you want to write the blog
+#                  posts to
+#    post [file]
+#      post a blog entry
+#      Arguments
+#        file      the file containing the article to post
         end
 
 

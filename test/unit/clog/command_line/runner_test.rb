@@ -14,7 +14,7 @@ module Clog
 
       def test_run
         xmlrpc_args = build_xmlrpc_args
-        Runner.commands << (command_class = stub("test command", :command_name => :test))
+        Runner.commands << (command_class = new_command_stub)
 
         command_args = ['command_arg']
         command_class.expects(:new).
@@ -45,10 +45,15 @@ module Clog
       end
 
       def test_usage
+        Runner.commands << new_command_stub
         assert_not_nil Runner.usage
       end
 
       private
+
+      def new_command_stub
+        stub("test command", :command_name => :test, :description => "the test command description", :arguments => [stub("test arg", :name => :arg1, :description => "some description")])
+      end
 
       def build_xmlrpc_args
         [

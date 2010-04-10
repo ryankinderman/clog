@@ -3,7 +3,7 @@ module Clog
     class PostCommand < Command
       self.description = "post a blog entry"
       define_arguments do |args|
-        args.add :file #, "the file containing the article to post
+        args.add :file, "the file containing the article to post"
       end
 
       def run
