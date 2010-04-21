@@ -52,15 +52,6 @@ module Clog
           end
 
           usage_str
-#    pull [path]
-#      pull all blog entries from a blog to a specified directory
-#      Arguments:
-#        path      the path on your local computer that you want to write the blog
-#                  posts to
-#    post [file]
-#      post a blog entry
-#      Arguments
-#        file      the file containing the article to post
         end
 
 
