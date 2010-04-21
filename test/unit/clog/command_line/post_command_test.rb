@@ -14,7 +14,7 @@ module Clog
         cmd = PostCommand.new(all_arguments)
         File.expects(:read).with(file_path = all_arguments.last).returns(file_data = "abc")
         Post.expects(:new).with(file_data).returns(post = mock('post'))
-        Post.expects(:client).returns(client = mock("client"))
+        cmd.expects(:client).returns(client = mock("client"))
         client.expects(:create_post).with(post)
 
         cmd.run

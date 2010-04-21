@@ -8,7 +8,8 @@ module Clog
 
       def run
         string_data = File.read(arguments[:file])
-        Post.send(:client).create_post(Post.new(string_data))
+        client.create_post(Post.new(string_data))
+        #Post.send(:client).create_post(Post.new(string_data))
       end
     end
   end

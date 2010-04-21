@@ -36,7 +36,7 @@ module Clog
       def initialize(argument_values)
         @argument_values = argument_values
         if valid?
-          Post.connection_params = arguments.slice(:host, :xmlrpc_path, :login, :password)
+          Post.connection_params = @connection_params = arguments.slice(:host, :xmlrpc_path, :login, :password)
         end
       end
 
@@ -52,6 +52,10 @@ module Clog
       end
 
       protected
+
+      def client
+        @client ||= Client.new(@connection_params)
+      end
 
       def arguments
         if @arguments.nil?

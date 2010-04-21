@@ -116,16 +116,24 @@ module Clog
         assert_equal "first arg", subclass.new(base_arguments + ["first arg"]).send(:arguments)[:arg1]
       end
 
-      def test_initialization_sets_post_connection_params
-        subclass = create_subclass(Command)
+      def test_client_lazily_initialized_from_connection_params
+        subclass = create_subclass(Command) do
+          def run
+            client
+          end
+        end
         arguments = base_arguments.dup
-        named_arguments = Command.arguments.inject({}) do |h,arg_def|
+        named_arguments = Command.arguments.inject({}) do |h, arg_def|
           h[arg_def.name] = arguments.shift
           h
         end
-        Post.expects(:connection_params=).with(named_arguments)
+        Client.expects(:new).never
 
-        cmd = subclass.new(base_arguments)
+        command = subclass.new(base_arguments.dup)
+
+        Client.expects(:new).with(named_arguments).returns(client = stub("client"))
+
+        assert_equal client, command.run
       end
 
       private
