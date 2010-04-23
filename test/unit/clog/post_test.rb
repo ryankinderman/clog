@@ -12,10 +12,6 @@ module Clog
       end
     end
 
-    def test_that_create_builds_to_post_from_string_data_and_sends_to_client
-      #Post.create(
-    end
-
     def test_basic_metaweblog_interface_mapping
       post_data = metaweblog_post
 
