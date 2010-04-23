@@ -5,10 +5,6 @@ module Clog
         @connection_params = value
       end
 
-      def all
-        client.all_posts.collect { |raw_post| new(raw_post) }
-      end
-
       def create(data)
         post = new(data)
         post.save

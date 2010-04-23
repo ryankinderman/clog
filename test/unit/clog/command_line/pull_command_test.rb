@@ -41,7 +41,9 @@ module Clog
           :id => '32',
           :title => 'This Rocks',
           :format => "markdown")
-        Post.expects(:all).returns([post])
+        cmd.expects(:client).returns(client = mock("client"))
+        client.expects(:all_posts).returns([raw_post = mock("raw post")])
+        Post.expects(:new).with(raw_post).returns(post)
         post.expects(:write).with("#{command_arguments[0]}/0032_this-rocks.markdown")
 
         cmd.run

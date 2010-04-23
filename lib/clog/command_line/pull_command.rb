@@ -18,7 +18,8 @@ module Clog
       end
 
       def run
-        Post.all.each do |post|
+        client.all_posts.each do |raw_post|
+          post = Post.new(raw_post)
           file_name = self.class.post_file_name(post)
           file_path = arguments[:path] + "/#{file_name}"
           post.write(file_path)
