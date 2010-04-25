@@ -41,7 +41,8 @@ module Clog
           :date_created => Types::Date.to_ruby(@raw_data['dateCreated']),
           :tags => @raw_data['mt_keywords'],
           :allows_comments => Types::Boolean.to_ruby(@raw_data['mt_allow_comments']),
-          :allows_pings => Types::Boolean.to_ruby(@raw_data['mt_allow_pings'])
+          :allows_pings => Types::Boolean.to_ruby(@raw_data['mt_allow_pings']),
+          :body => @raw_data['description']
         }
       else
         @attributes = data
@@ -198,7 +199,7 @@ module Clog
       io.puts "Pings: Off"
       io.puts "Comments: On"
       io.puts
-      io.puts @raw_data["description"]
+      io.puts body
     end
   end
 end
