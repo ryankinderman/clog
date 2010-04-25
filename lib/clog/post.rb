@@ -1,20 +1,10 @@
 module Clog
   class Post
     class << self
-      def connection_params=(value)
-        @connection_params = value
-      end
-
       def create(data)
         post = new(data)
         post.save
         post
-      end
-
-      private
-
-      def client
-        @client = Client.new(@connection_params)
       end
     end
 
