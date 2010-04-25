@@ -1,13 +1,5 @@
 module Clog
   class Post
-    class << self
-      def create(data)
-        post = new(data)
-        post.save
-        post
-      end
-    end
-
     {
       'postid' => :id,
       'link' => :link,
