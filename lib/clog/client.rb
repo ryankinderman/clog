@@ -18,7 +18,7 @@ module Clog
       most_recent_post = posts[0]
       most_recent_post_id = most_recent_post['postid'].to_i
 
-      recent_posts(most_recent_post_id + 1).collect { |raw_post| Post.new(raw_post) } #create_native_post(raw_post) }
+      recent_posts(most_recent_post_id + 1).collect { |raw_post| create_native_post(raw_post) }
     end
 
     def create_post(post)

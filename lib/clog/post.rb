@@ -1,16 +1,5 @@
 module Clog
   class Post
-    {
-      'postid' => :id,
-      'link' => :link,
-      'mt_allow_comments' => :allows_comments,
-      'mt_allow_pings' => :allows_pings
-    }.each do |data_field, method|
-      define_method method do
-        @raw_data[data_field]
-      end
-    end
-
     [
       :title,
       :link,
@@ -32,17 +21,16 @@ module Clog
       if data.is_a?(String)
         @raw_data = build_data(data)
       elsif data.include?('mt_allow_comments')
-        @raw_data = data
         @attributes = {
-          :id => @raw_data['postid'],
-          :link => @raw_data['link'],
-          :title => @raw_data['title'],
-          :format => @raw_data['mt_convert_breaks'],
-          :date_created => Types::Date.to_ruby(@raw_data['dateCreated']),
-          :tags => @raw_data['mt_keywords'],
-          :allows_comments => Types::Boolean.to_ruby(@raw_data['mt_allow_comments']),
-          :allows_pings => Types::Boolean.to_ruby(@raw_data['mt_allow_pings']),
-          :body => @raw_data['description']
+          :id => data['postid'],
+          :link => data['link'],
+          :title => data['title'],
+          :format => data['mt_convert_breaks'],
+          :date_created => Types::Date.to_ruby(data['dateCreated']),
+          :tags => data['mt_keywords'],
+          :allows_comments => Types::Boolean.to_ruby(data['mt_allow_comments']),
+          :allows_pings => Types::Boolean.to_ruby(data['mt_allow_pings']),
+          :body => data['description']
         }
       else
         @attributes = data
