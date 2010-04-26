@@ -43,5 +43,29 @@ module Clog
 
       Client.new({}).all_posts
     end
+
+    def test_all_posts_boolean_field_is_true_from_metaweblog_value
+      XMLRPC::Client.expects(:new).returns(mock_mwb_client = mock("mwb client"))
+      mock_mwb_client.stubs(:call).returns([
+        mwb_post = stub_mwb_post('mt_allow_comments' => 1)
+      ])
+      Post.expects(:new).with(has_entries(
+        :allows_comments => true
+      )).returns(native_post = mock("native post"))
+
+      Client.new({}).all_posts
+    end
+
+    def test_all_posts_boolean_field_is_false_from_metaweblog_value
+      XMLRPC::Client.expects(:new).returns(mock_mwb_client = mock("mwb client"))
+      mock_mwb_client.stubs(:call).returns([
+        mwb_post = stub_mwb_post('mt_allow_comments' => 0)
+      ])
+      Post.expects(:new).with(has_entries(
+        :allows_comments => false
+      )).returns(native_post = mock("native post"))
+
+      Client.new({}).all_posts
+    end
   end
 end

@@ -30,27 +30,6 @@ module Clog
       assert_equal date_created.gmtime, post.date_created
     end
 
-    {
-      :allows_comments => 'mt_allow_comments',
-      :allows_pings => 'mt_allow_pings'
-    }.each do |attribute, dto_field|
-      define_method "test_that_#{attribute}_is_true_from_dto_value" do
-        post_data = metaweblog_post(dto_field => 1)
-
-        post = Post.new(post_data)
-
-        assert_equal true, post.send(attribute)
-      end
-
-      define_method "test_that_#{attribute}_is_false_from_dto_value" do
-        post_data = metaweblog_post(dto_field => 0)
-
-        post = Post.new(post_data)
-
-        assert_equal false, post.send(attribute)
-      end
-    end
-
     def test_write
       post_data = metaweblog_post
       post = Post.new(post_data)
@@ -122,6 +101,7 @@ Comments: On
       assert_equal raw_data['Body'], post.raw_data['description']
     end
 
+    private
 
     def saved_post(data)
       data = {
