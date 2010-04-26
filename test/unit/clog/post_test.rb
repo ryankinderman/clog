@@ -31,23 +31,22 @@ module Clog
     end
 
     def test_write
-      post_data = metaweblog_post
-      post = Post.new(post_data)
+      post = Post.new(post_attributes = all_post_params)
       io = StringIO.new
 
       post.write(io)
 
       msg =<<-s
-Link: #{post_data['link']}
-Post: #{post_data['postid']}
-Title: #{post_data['title']}
-Keywords: #{post_data['mt_keywords']}
-Format: #{post_data['mt_convert_breaks']}
+Link: #{post_attributes[:link]}
+Post: #{post_attributes[:id]}
+Title: #{post_attributes[:title]}
+Keywords: #{post_attributes[:tags]}
+Format: #{post_attributes[:format]}
 Date: 2006-10-30 01:02:03 GMT
 Pings: Off
 Comments: On
 
-#{post_data['description']}
+#{post_attributes[:body]}
       s
 
       assert_equal msg, io.string
@@ -57,22 +56,21 @@ Comments: On
       tmpfile = Tempfile.new('write_with_file')
       tmpfile.close
 
-      post_data = metaweblog_post
-      post = Post.new(post_data)
+      post = Post.new(post_attributes = all_post_params)
 
       post.write(tmpfile.path)
 
       msg = <<-s
-Link: #{post_data['link']}
-Post: #{post_data['postid']}
-Title: #{post_data['title']}
-Keywords: #{post_data['mt_keywords']}
-Format: #{post_data['mt_convert_breaks']}
+Link: #{post_attributes[:link]}
+Post: #{post_attributes[:id]}
+Title: #{post_attributes[:title]}
+Keywords: #{post_attributes[:tags]}
+Format: #{post_attributes[:format]}
 Date: 2006-10-30 01:02:03 GMT
 Pings: Off
 Comments: On
 
-#{post_data['description']}
+#{post_attributes[:body]}
       s
 
       assert_equal msg, File.read(tmpfile.path)
@@ -121,20 +119,6 @@ Comments: On
       str_post
     end
 
-    def metaweblog_post(fields = {})
-      {
-        'link' => "http://kinderman.net/articles/cool-article",
-        'postid' => "110",
-        'title' => "Cool Article Title",
-        'mt_keywords' => "tag1 tag2 tag3",
-        'mt_convert_breaks' => 'someformat',
-        'mt_allow_comments' => 1,
-        'mt_allow_pings' => 0,
-        'dateCreated' => stub('date created', :to_time => (fields.delete('dateCreated') || Time.gm(2006,10,30,1,2,3))),
-        'description' => "This is the body of a really nifty article about something important"
-      }.merge(fields)
-    end
-
     def all_post_params(overrides = {})
       {
         :title => "Title Abc",
@@ -142,7 +126,7 @@ Comments: On
         :body => "If you like my body, and you think I'm sexy, come on baby let me know!",
         :id => "123",
         :format => "markdown",
-        :date_created => Time.now.gmtime,
+        :date_created => Time.gm(2006, 10, 30, 1, 2, 3),
         :tags => "one two three",
         :allows_pings => false,
         :allows_comments => true
