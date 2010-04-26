@@ -12,21 +12,6 @@ module Clog
       end
     end
 
-    def test_basic_metaweblog_interface_mapping
-      post_data = metaweblog_post
-
-      post = Post.new(post_data)
-
-      {
-        'postid' => :id,
-        'link' => :link,
-        'title' => :title,
-        'mt_convert_breaks' => :format
-      }.each do |data_field, post_method|
-        assert_equal post_data[data_field], post.send(post_method)
-      end
-    end
-
     def test_tags
       post_data = metaweblog_post('mt_keywords' => (tags = "tag1 tag2 tag3"))
 
