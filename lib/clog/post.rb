@@ -20,18 +20,6 @@ module Clog
     def initialize(data)
       if data.is_a?(String)
         @raw_data = build_data(data)
-      elsif data.include?('mt_allow_comments')
-        @attributes = {
-          :id => data['postid'],
-          :link => data['link'],
-          :title => data['title'],
-          :format => data['mt_convert_breaks'],
-          :date_created => Types::Date.to_ruby(data['dateCreated']),
-          :tags => data['mt_keywords'],
-          :allows_comments => Types::Boolean.to_ruby(data['mt_allow_comments']),
-          :allows_pings => Types::Boolean.to_ruby(data['mt_allow_pings']),
-          :body => data['description']
-        }
       else
         @attributes = data
       end
