@@ -73,5 +73,32 @@ module Clog
 
       Client.new({}).create_post(post)
     end
+
+    def test_create_post_maps_date_created
+      XMLRPC::Client.expects(:new).returns(mock_mwb_client = mock("mwb client"))
+      post = stub("stubbed post", post_params)
+      t = post.date_created
+
+      mock_mwb_client.expects(:call).with(
+        *(Array.new(4, anything) + [has_entries(
+          'dateCreated' => XMLRPC::DateTime.new(
+            t.year, t.mon, t.day, t.hour, t.min, t.sec
+          )
+        )])
+      )
+
+      Client.new({}).create_post(post)
+    end
+
+    def test_create_post_does_not_include_date_created_if_nil_on_post
+      XMLRPC::Client.expects(:new).returns(mock_mwb_client = mock("mwb client"))
+      post = stub("stubbed post", post_params(:date_created => nil))
+
+      mock_mwb_client.expects(:call).with(
+        *(Array.new(4, anything) + [Not(has_key('dateCreated'))])
+      )
+
+      Client.new({}).create_post(post)
+    end
   end
 end

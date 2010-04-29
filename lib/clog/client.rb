@@ -28,13 +28,20 @@ module Clog
     private
 
     def create_mwb_post(post)
-      {
+      data = {
         'postid' => post.id,
         'link' => post.link,
         'title' => post.title,
         'mt_convert_breaks' => post.format,
         'mt_keywords' => post.tags
       }
+
+      t = post.date_created
+      data['dateCreated'] = XMLRPC::DateTime.new(
+        t.year, t.mon, t.day, t.hour, t.min, t.sec
+      ) unless t.nil?
+
+      data
     end
 
     def create_native_post(raw_post)
