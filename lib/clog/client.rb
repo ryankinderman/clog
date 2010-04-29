@@ -33,7 +33,9 @@ module Clog
         'link' => post.link,
         'title' => post.title,
         'mt_convert_breaks' => post.format,
-        'mt_keywords' => post.tags
+        'mt_keywords' => post.tags,
+        'mt_allow_pings' => convert_boolean_to_mwb(post.allows_pings),
+        'mt_allow_comments' => convert_boolean_to_mwb(post.allows_comments)
       }
 
       t = post.date_created
@@ -71,6 +73,17 @@ module Clog
         false
       else
         raise "Unrecognized value: #{xmlrpc_bool.inspect}"
+      end
+    end
+
+    def convert_boolean_to_mwb(ruby_bool)
+      case ruby_bool
+      when true
+        1
+      when false
+        0
+      else
+        raise "Unrecognized value: #{ruby_bool.inspect}"
       end
     end
 

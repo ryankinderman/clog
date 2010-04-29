@@ -100,5 +100,23 @@ module Clog
 
       Client.new({}).create_post(post)
     end
+
+    def test_create_post_maps_boolean_fields
+      XMLRPC::Client.expects(:new).returns(mock_mwb_client = mock("mwb client"))
+      post = stub("stubbed post", post_params(
+        :allows_pings => false,
+        :allows_comments => true
+
+      ))
+
+      mock_mwb_client.expects(:call).with(
+        *(Array.new(4, anything) + [has_entries(
+          'mt_allow_pings' => 0,
+          'mt_allow_comments' => 1
+        )])
+      )
+
+      Client.new({}).create_post(post)
+    end
   end
 end
