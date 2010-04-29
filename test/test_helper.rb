@@ -24,6 +24,20 @@ Test::Unit::TestCase.class_eval do
 
   private
 
+  def post_params(overrides = {})
+    {
+      :title => "Title Abc",
+      :link => "http://kinderman.net/articles/123",
+      :body => "If you like my body, and you think I'm sexy, come on baby let me know!",
+      :id => "123",
+      :format => "markdown",
+      :date_created => Time.gm(2006, 10, 30, 1, 2, 3),
+      :tags => "one two three",
+      :allows_pings => false,
+      :allows_comments => true
+    }.merge(overrides)
+  end
+
   def stub_mwb_post(overrides = {})
     {
       "mt_excerpt"=>"",

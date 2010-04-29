@@ -6,7 +6,7 @@ require 'time'
 module Clog
   class PostTest < Test::Unit::TestCase
     def test_that_post_can_be_created_by_attribute_hash
-      post = Post.new(params = all_post_params)
+      post = Post.new(params = post_params)
       params.each_key do |attr_name|
         assert_equal params[attr_name], post.send(attr_name), "Attribute: #{attr_name}"
       end
@@ -31,7 +31,7 @@ module Clog
     end
 
     def test_write
-      post = Post.new(post_attributes = all_post_params)
+      post = Post.new(post_attributes = post_params)
       io = StringIO.new
 
       post.write(io)
@@ -56,7 +56,7 @@ Comments: On
       tmpfile = Tempfile.new('write_with_file')
       tmpfile.close
 
-      post = Post.new(post_attributes = all_post_params)
+      post = Post.new(post_attributes = post_params)
 
       post.write(tmpfile.path)
 
@@ -117,20 +117,6 @@ Comments: On
       end
 
       str_post
-    end
-
-    def all_post_params(overrides = {})
-      {
-        :title => "Title Abc",
-        :link => "http://kinderman.net/articles/123",
-        :body => "If you like my body, and you think I'm sexy, come on baby let me know!",
-        :id => "123",
-        :format => "markdown",
-        :date_created => Time.gm(2006, 10, 30, 1, 2, 3),
-        :tags => "one two three",
-        :allows_pings => false,
-        :allows_comments => true
-      }.merge(overrides)
     end
 
   end
