@@ -56,5 +56,22 @@ module Clog
 
       Client.new({}).all_posts
     end
+
+    def test_create_post_basic_metaweblog_interface_mapping
+      XMLRPC::Client.expects(:new).returns(mock_mwb_client = mock("mwb client"))
+      post = stub("stubbed post", post_params)
+
+      mock_mwb_client.expects(:call).with(
+        *(Array.new(4, anything) + [has_entries(
+          'postid' => post.id,
+          'link' => post.link,
+          'title' => post.title,
+          'mt_convert_breaks' => post.format,
+          'mt_keywords' => post.tags
+        )])
+      )
+
+      Client.new({}).create_post(post)
+    end
   end
 end

@@ -22,10 +22,20 @@ module Clog
     end
 
     def create_post(post)
-      metaweblog_command('metaWeblog.newPost', post.raw_data)
+      metaweblog_command('metaWeblog.newPost', create_mwb_post(post))
     end
 
     private
+
+    def create_mwb_post(post)
+      {
+        'postid' => post.id,
+        'link' => post.link,
+        'title' => post.title,
+        'mt_convert_breaks' => post.format,
+        'mt_keywords' => post.tags
+      }
+    end
 
     def create_native_post(raw_post)
       attributes = {
