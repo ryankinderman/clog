@@ -67,7 +67,8 @@ module Clog
           'link' => post.link,
           'title' => post.title,
           'mt_convert_breaks' => post.format,
-          'mt_keywords' => post.tags
+          'mt_keywords' => post.tags,
+          'description' => post.body
         )])
       )
 
@@ -115,6 +116,16 @@ module Clog
           'mt_allow_comments' => 1
         )])
       )
+
+      Client.new({}).create_post(post)
+    end
+
+    def test_create_post_mapping_excludes_nil_post_fields
+      XMLRPC::Client.expects(:new).returns(mock_mwb_client = mock("mwb client"))
+      post = stub("stubbed post", post_params.inject({}) { |h, kv| h[kv.first] = nil; h })
+
+      mock_mwb_client.expects(:call).with(
+        *(Array.new(4, anything) + [{}]))
 
       Client.new({}).create_post(post)
     end

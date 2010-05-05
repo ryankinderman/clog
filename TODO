@@ -1,3 +1,6 @@
+- Remove custom 'tags' method from Post, add 'tags' to attributes methods
+
+
 - CommandLine should:
   - only interact with Blog
   - provide the commands 'pull' and 'post'

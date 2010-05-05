@@ -19,7 +19,7 @@ module Clog
 
     def initialize(data)
       if data.is_a?(String)
-        @raw_data = build_data(data)
+        @attributes = build_data(data)
       else
         @attributes = data
       end
@@ -48,10 +48,11 @@ module Clog
     module Types
       class String
         class << self
-          def to_native(value)
-            value.to_s
+          def to_ruby(value)
+            value
           end
-          def to_dto(value)
+
+          def to_native(value)
             value.to_s
           end
         end
@@ -62,23 +63,14 @@ module Clog
           @@file_to_dto = { "On" => 1, "Off" => 0 }
 
           def to_ruby(value)
-            # for now, assumes from DTO
-            case value
-            when 1
-              true
-            when 0
-              false
-            else
-              raise "Unrecognized value: #{value.inspect}"
-            end
+            verify!(value, { 
+              "On" => true,
+              "Off" => false
+            }[value])
           end
 
           def to_native(value)
             verify!(@@file_to_dto.invert[value])
-          end
-
-          def to_dto(value)
-            verify!(value, @@file_to_dto[value])
           end
 
           private
@@ -96,11 +88,6 @@ module Clog
             value.to_time
           end
 
-          def to_dto(value)
-            time = Time.parse(value)
-            XMLRPC::DateTime.new(time.year, time.mon, time.day, time.hour, time.min, time.sec)
-          end
-
           def to_native(value)
             time = to_ruby(value)
             time.gmtime.strftime("%Y-%m-%d %H:%M:%S GMT")
@@ -110,21 +97,21 @@ module Clog
     end
 
     FIELDS = {
-      "Link" => "link",
-      "Post" => "postid",
-      "Title" => "title",
-      "Keywords" => "mt_keywords",
-      "Format" => "mt_convert_breaks",
+      "Link" => :link,
+      "Post" => :id,
+      "Title" => :title,
+      "Keywords" => :tags,
+      "Format" => :format,
       "Date" => {
-        :name => "dateCreated",
+        :name => :date_created,
         :type => Types::Date
       },
       "Pings" => {
-        :name => "mt_allow_pings",
+        :name => :allows_pings,
         :type => Types::Boolean
       },
       "Comments" => {
-        :name => "mt_allow_comments",
+        :name => :allows_comments,
         :type => Types::Boolean
       }
     }
@@ -153,14 +140,14 @@ module Clog
                 Types::String
               end
 
-            data[cnv_field_name] = cnv_field_type.to_dto(field_value)
+            data[cnv_field_name] = cnv_field_type.to_ruby(field_value)
           end
         end
 
         i += 1
       end
 
-      data['description'] = lines[i..-1].join("\n")
+      data[:body] = lines[i..-1].join("\n")
 
       data
     end

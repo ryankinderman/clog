@@ -34,9 +34,11 @@ module Clog
         'title' => post.title,
         'mt_convert_breaks' => post.format,
         'mt_keywords' => post.tags,
-        'mt_allow_pings' => convert_boolean_to_mwb(post.allows_pings),
-        'mt_allow_comments' => convert_boolean_to_mwb(post.allows_comments)
+        'mt_allow_pings' => post.allows_pings.nil? ? nil : convert_boolean_to_mwb(post.allows_pings),
+        'mt_allow_comments' => post.allows_comments.nil? ? nil : convert_boolean_to_mwb(post.allows_comments),
+        'description' => post.body
       }
+      data = data.inject({}) { |h, pair| h[pair.first] = pair.last unless pair.last.nil?; h }
 
       t = post.date_created
       data['dateCreated'] = XMLRPC::DateTime.new(

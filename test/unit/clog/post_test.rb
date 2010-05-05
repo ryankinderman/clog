@@ -80,7 +80,7 @@ Comments: On
 
     # {"mt_excerpt"=>"", "title"=>"Blog up", "mt_tb_ping_urls"=>["http://rpc.technorati.com/rpc/ping", "http://ping.blo.gs/", "http://rpc.weblogs.com/RPC2", "http://wordpress.org/", "http://www.rubyist.net/~matz/", "http://www.ruby-lang.org", "http://www.loudthinking.com/", "http://www.rubyonrails.org", "http://blog.leetsoft.com/", "http://www.typosphere.org"], "mt_allow_comments"=>1, "permaLink"=>"http://kinderman.net/articles/2006/04/07/blog-up", "url"=>"http://kinderman.net/articles/2006/04/07/blog-up", "mt_convert_breaks"=>"none", "mt_keywords"=>"", "mt_text_more"=>"", "postid"=>"1", "dateCreated"=>#<XMLRPC::DateTime:0x1011aefa8 @sec=0, @month=4, @min=5, @year=2006, @hour=22, @day=7>, "link"=>"http://kinderman.net/articles/2006/04/07/blog-up", "categories"=>["general"], "description"=>"<p>\nAt long last, I've finally got my blog up using a decent engine. I started off using <a href=\"http://wordpress.org/\">WordPress</a>, but the PHP made my little object-oriented heart ache. I would like to thank <a href=\"http://www.rubyist.net/~matz/\">Matsumoto San</a>, for bringing us <a href=\"http://www.ruby-lang.org\">Ruby</a>, <a href=\"http://www.loudthinking.com/\">David Heinemeir Hansson</a> for <a href=\"http://www.rubyonrails.org\">Rails</a>, and <a href=\"http://blog.leetsoft.com/\">Tobias Luetke</a> for <a href=\"http://www.typosphere.org\">Typo</a>.\n</p>", "mt_allow_pings"=>0}
     def test_that_it_can_be_constructed_from_a_string
-      raw_data = {
+      file_data = {
         'Title' => "Abc",
         'Keywords' => "one two three",
         'Format' => "markdown",
@@ -89,14 +89,14 @@ Comments: On
         'Body' => "I'm the body"
       }
 
-      post = Post.new(saved_post(raw_data))
+      post = Post.new(saved_post(file_data))
 
-      assert_equal raw_data['Title'], post.raw_data['title']
-      assert_equal raw_data['Keywords'], post.raw_data['mt_keywords']
-      assert_equal raw_data['Format'], post.raw_data['mt_convert_breaks']
-      assert_equal 0, post.raw_data['mt_allow_pings']
-      assert_equal 1, post.raw_data['mt_allow_comments']
-      assert_equal raw_data['Body'], post.raw_data['description']
+      assert_equal file_data['Title'], post.title
+      assert_equal file_data['Keywords'], post.tags
+      assert_equal file_data['Format'], post.format
+      assert_equal false, post.allows_pings
+      assert_equal true, post.allows_comments
+      assert_equal file_data['Body'], post.body
     end
 
     private

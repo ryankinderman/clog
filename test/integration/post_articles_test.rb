@@ -15,7 +15,7 @@ EOF
 )
 
     XMLRPC::Client.stubs(:new).returns(client = mock("xmlrpc client"))
-    t = Time.parse(date_created)
+    t = date_created.to_time
     client.expects(:call).with(
       'metaWeblog.newPost', 1, 'testuser', 'testpass',
       {
