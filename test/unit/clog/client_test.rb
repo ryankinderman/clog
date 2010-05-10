@@ -27,7 +27,8 @@ module Clog
         :link => mwb_post['link'],
         :title => mwb_post['title'],
         :format => mwb_post['mt_convert_breaks'],
-        :tags => mwb_post['mt_keywords']
+        :tags => mwb_post['mt_keywords'],
+        :body => mwb_post['description']
       )).returns(native_post = mock("native post"))
 
       Client.new({}).all_posts

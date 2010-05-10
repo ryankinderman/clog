@@ -57,7 +57,8 @@ module Clog
         :date_created => convert_date_to_ruby(raw_post['dateCreated']),
         :tags => raw_post['mt_keywords'],
         :allows_comments => convert_boolean_to_ruby(raw_post['mt_allow_comments']),
-        :allows_pings => convert_boolean_to_ruby(raw_post['mt_allow_pings'])
+        :allows_pings => convert_boolean_to_ruby(raw_post['mt_allow_pings']),
+        :body => raw_post['description']
       }
 
       Post.new(attributes)
