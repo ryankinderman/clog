@@ -8,7 +8,8 @@ module Clog
       :format,
       :date_created,
       :allows_pings,
-      :allows_comments
+      :allows_comments,
+      :tags
     ].each do |attr_name|
       define_method attr_name do
         @attributes[attr_name]
@@ -23,10 +24,6 @@ module Clog
       else
         @attributes = data
       end
-    end
-
-    def tags
-      @tags ||= @attributes[:tags]
     end
 
     def format
