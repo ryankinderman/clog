@@ -15,6 +15,10 @@ module Clog
 
       include Enumerable
 
+      def initialize
+        @args_by_id = { nil => [] }
+      end
+
       def add(name, description_or_options = "")
         options = \
           if description_or_options.is_a?(String)
@@ -26,6 +30,11 @@ module Clog
 
         argument = Argument.new(attributes)
         args_list << argument
+        if argument.id.nil?
+          by_id[argument.id] << argument
+        else
+          by_id[argument.id] = argument
+        end
 
         argument
       end
@@ -42,11 +51,37 @@ module Clog
         args_list.size
       end
 
+      def by_id
+        @args_by_id
+      end
+
       def combine(argument_values)
         arguments = {}
 
-        [size, argument_values.size].min.times do |i|
+        ids = inject([]) { |m, arg| m << arg.id unless arg.id.nil?; m }
+        last_identifier = nil
+        arg_values_by_id = argument_values.inject({nil => []}) do |m, value|
+          if value =~ /^-/ and ids.include?(current_id = value[1..-1])
+            last_identifier = current_id
+          else
+            if last_identifier.nil?
+              m[last_identifier] << value
+            else
+              m[last_identifier] = value
+            end
+            last_identifier = nil
+          end
+          m
+        end
+
+        ordered_size = select { |arg| arg.id.nil? }.size
+        [ordered_size, arg_values_by_id[nil].size].min.times do |i|
           arguments[self[i].name] = argument_values[i]
+        end
+
+        arg_values_by_id.each do |id, value|
+          next if id.nil?
+          arguments[by_id[id].name] = value
         end
 
         arguments
