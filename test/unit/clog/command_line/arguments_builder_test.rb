@@ -80,12 +80,31 @@ module Clog
         assert_equal "f", argument.id
       end
 
-      def test_can_access_argument_by_its_identifier
+      def test_treats_all_ordered_arguments_as_required
         builder = ArgumentsBuilder.new
 
-        argument = builder.add :arg1, :id => "f"
+        expected_argument = builder.add :arg1
+        builder.add :arg2, :id => "f"
 
-        assert_same argument, builder.by_id["f"]
+        assert_equal [expected_argument], builder.select { |arg| arg.required? }
+      end
+
+      def test_required_present_returns_true_if_all_required_arguments_are_present
+        builder = ArgumentsBuilder.new
+
+        expected_argument = builder.add :arg1
+        builder.add :arg2, :id => "f"
+
+        assert_equal true, builder.required_present?(["arg1 value"])
+      end
+
+      def test_required_present_returns_false_if_all_required_arguments_are_not_present
+        builder = ArgumentsBuilder.new
+
+        expected_argument = builder.add :arg1
+        builder.add :arg2, :id => "f"
+
+        assert_equal false, builder.required_present?(["-f", "arg2 value"])
       end
 
       def test_combine_returns_arg_hash_keyed_by_arg_name
@@ -136,6 +155,28 @@ module Clog
         builder.add :arg1, :id => "f"
         combined = builder.combine(["-f", "f value"])
         expected_combined = { :arg1 => "f value" }
+
+        assert_equal expected_combined, combined
+      end
+
+      def test_combine_ignores_arguments_with_identifiers_without_values
+        builder = ArgumentsBuilder.new
+
+        builder.add :arg1, :id => "f"
+        builder.add :arg2, :id => "b"
+        combined = builder.combine(["-f", "-b", "b value"])
+        expected_combined = { :arg2 => "b value" }
+
+        assert_equal expected_combined, combined
+      end
+
+      def test_combine_works_with_arguments_with_and_without_identifiers
+        builder = ArgumentsBuilder.new
+
+        builder.add :arg1
+        builder.add :arg2, :id => "b"
+        combined = builder.combine(["arg1 value", "-b", "b value"])
+        expected_combined = { :arg1 => "arg1 value", :arg2 => "b value" }
 
         assert_equal expected_combined, combined
       end

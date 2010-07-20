@@ -41,7 +41,7 @@ module Clog
       end
 
       def valid?
-        unless given_enough_arguments = (@argument_values.size >= self.class.arguments.size)
+        unless given_enough_arguments = self.class.arguments.required_present?(@argument_values)
           @error_message = "Too few arguments"
         end
         @valid ||= given_enough_arguments

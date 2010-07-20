@@ -11,12 +11,17 @@ module Clog
             end
           end
         end
+
+        def required?
+          id.nil?
+        end
       end
 
       include Enumerable
 
       def initialize
         @args_by_id = { nil => [] }
+        @args_by_name = {}
       end
 
       def add(name, description_or_options = "")
@@ -30,6 +35,7 @@ module Clog
 
         argument = Argument.new(attributes)
         args_list << argument
+        by_name[name] = argument
         if argument.id.nil?
           by_id[argument.id] << argument
         else
@@ -51,8 +57,9 @@ module Clog
         args_list.size
       end
 
-      def by_id
-        @args_by_id
+      def required_present?(argument_values)
+        combined_required = combine(argument_values).select { |name, value| by_name[name].required? }
+        select { |arg| arg.required? }.size == combined_required.size
       end
 
       def combine(argument_values)
@@ -96,6 +103,15 @@ module Clog
       def args_list
         @args_list ||= []
       end
+
+      def by_id
+        @args_by_id
+      end
+
+      def by_name
+        @args_by_name
+      end
+
     end
   end
 end
