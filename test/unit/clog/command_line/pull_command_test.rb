@@ -43,7 +43,7 @@ module Clog
           :format => "markdown")
         cmd.expects(:client).returns(client = mock("client"))
         client.expects(:all_posts).returns([post])
-        post.expects(:write).with("#{command_arguments[0]}/0032_this-rocks.markdown")
+        post.expects(:write).with("#{command_arguments[1]}/0032_this-rocks.markdown")
 
         cmd.run
       end
@@ -51,7 +51,7 @@ module Clog
       private
 
       def command_arguments
-        ["target_path"]
+        ["-d", "target_path"]
       end
 
       def all_arguments

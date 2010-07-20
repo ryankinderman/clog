@@ -27,6 +27,14 @@ module Clog
         assert_equal "Some description", argument.description
       end
 
+      def test_description_can_be_passed_in_an_options_hash
+        builder = ArgumentsBuilder.new
+
+        argument = builder.add :arg1, :description => "Some description"
+
+        assert_equal "Some description", argument.description
+      end
+
       def test_allows_zero_arguments
         builder = ArgumentsBuilder.new
 
@@ -62,6 +70,46 @@ module Clog
         end
 
         assert_equal [:arg1, :arg2], args
+      end
+
+      def test_an_argument_can_have_an_identifier_in_options_hash
+        builder = ArgumentsBuilder.new
+
+        argument = builder.add :arg1, :id => "f"
+
+        assert_equal "f", argument.id
+      end
+
+      def test_combine_returns_arg_hash_keyed_by_arg_name
+        builder = ArgumentsBuilder.new
+
+        builder.add :arg1
+        builder.add :arg2
+        combined = builder.combine(["arg1 val", "arg2 val"])
+        expected_combined = { :arg1 => "arg1 val", :arg2 => "arg2 val" }
+
+        assert_equal expected_combined, combined
+      end
+
+      def test_combine_ignores_extra_arguments
+        builder = ArgumentsBuilder.new
+
+        builder.add :arg1
+        builder.add :arg2
+        combined = builder.combine(["arg1 val"])
+        expected_combined = { :arg1 => "arg1 val" }
+
+        assert_equal expected_combined, combined
+      end
+
+      def test_combine_ignores_extra_argument_values
+        builder = ArgumentsBuilder.new
+
+        builder.add :arg1
+        combined = builder.combine(["arg1 val", "arg2 val"])
+        expected_combined = { :arg1 => "arg1 val" }
+
+        assert_equal expected_combined, combined
       end
 
     end

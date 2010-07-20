@@ -58,14 +58,7 @@ module Clog
       end
 
       def arguments
-        if @arguments.nil?
-          @arguments = {}
-          [self.class.arguments.size, @argument_values.size].min.times do |i|
-            @arguments[self.class.arguments[i].name] = @argument_values[i]
-          end
-        end
-
-        @arguments
+        @arguments ||= self.class.arguments.combine(@argument_values)
       end
     end
   end
