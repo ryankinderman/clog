@@ -10,15 +10,16 @@ module Clog
           @commands ||= [PullCommand, PostCommand]
         end
 
-        def run(args, errout)
+        def run(args, options={})
+          options = {:stdout => STDOUT, :stderr => STDERR}.merge(options)
           command = new_command(command_name = args.shift, args)
 
           if command.valid?
             command.run
             true
           else
-            errout.puts command.error_message
-            errout.puts usage
+            options[:stderr].puts command.error_message
+            options[:stderr].puts usage
             false
           end
         end

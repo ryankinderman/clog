@@ -24,7 +24,7 @@ module Clog
 
         response = Runner.run(
           [command_class.command_name] + xmlrpc_args + command_args,
-          err = StringIO.new)
+          :stderr => StringIO.new)
 
         assert_equal true, response
       end
@@ -37,7 +37,7 @@ module Clog
 
         response = Runner.run(
           ["blah"],
-          err = StringIO.new)
+          :stderr => (err = StringIO.new))
 
         assert_match /something went wrong/, err.string
         assert_match /usage/, err.string.downcase

@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + "/../test_helper")
 
-class PostArticleTest < Test::Unit::TestCase
+class PostArticlesTest < Test::Unit::TestCase
   def test_post_new_article
     file = write_file(<<-EOF
 Title: #{title = 'Abc'}
@@ -31,7 +31,6 @@ EOF
 
     begin
       run_command("post", file)
-      #puts @errorio.string
     ensure
       File.delete(file)
     end

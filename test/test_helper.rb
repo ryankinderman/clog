@@ -61,6 +61,6 @@ Test::Unit::TestCase.class_eval do
       host = "example.com",
       xmlrpc_path = "/xmlrpc",
       login = "testuser",
-      password = "testpass"] + args, @errorio = StringIO.new)
+      password = "testpass"] + args, :stdout => (@stdout = StringIO.new), :stderr => (@stderr = StringIO.new))
   end
 end
