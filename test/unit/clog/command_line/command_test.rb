@@ -64,46 +64,50 @@ module Clog
         assert_equal true, subclass.new(base_arguments).valid?
       end
 
-      def test_is_valid_if_one_additional_argument_is_required_and_one_is_given
-        subclass = create_subclass(Command) do
-          define_arguments do |args|
-            args.add :arg1
-          end
-        end
-
-        assert_equal true, subclass.new(base_arguments + ["1"]).valid?
-      end
-
-      def test_is_not_valid_if_one_additional_argument_is_required_and_none_are_given
-        subclass = create_subclass(Command) do
-          define_arguments do |args|
-            args.add :arg1
-          end
-        end
-
-        command = subclass.new(base_arguments)
-
-        assert_equal false, command.valid?
-        assert_not_nil command.error_message
-      end
-
-      def test_is_valid_if_one_additional_argument_is_required_and_two_are_given
-        subclass = create_subclass(Command) do
-          define_arguments do |args|
-            args.add :arg1
-          end
-        end
-
-        assert_equal true, subclass.new(base_arguments + ["1", "2"]).valid?
-      end
-
-      def test_is_not_valid_without_at_least_providing_the_base_number_of_arguments
+      def test_provides_define_arguments_for_declarative_argument_definition
+        ArgumentsBuilder.expects(:new).returns(builder = mock("argument builder"))
+        builder.expects(:add).with(:arg1)
         subclass = create_subclass(Command)
+        clear_arguments!(subclass)
 
-        command = subclass.new([])
+        subclass.class_eval do
+          define_arguments do |args|
+            args.add :arg1
+          end
+        end
 
-        assert_equal false, command.valid?
-        assert_not_nil command.error_message
+        assert_same builder, subclass.arguments
+      end
+
+      def test_is_valid_if_all_required_arguments_are_present
+        ArgumentsBuilder.expects(:new).returns(builder = mock("argument builder"))
+        builder.expects(:add).with(:arg1)
+        subclass = create_subclass(Command)
+        clear_arguments!(subclass)
+        subclass.class_eval do
+          define_arguments do |args|
+            args.add :arg1
+          end
+        end
+        builder.expects(:combine).returns({})
+        builder.expects(:required_present?).with(["123"]).at_least_once.returns(true)
+
+        assert_equal true, subclass.new(["123"]).valid?
+      end
+
+      def test_is_not_valid_if_all_required_arguments_are_not_present
+        ArgumentsBuilder.expects(:new).returns(builder = mock("argument builder"))
+        builder.expects(:add).with(:arg1)
+        subclass = create_subclass(Command)
+        clear_arguments!(subclass)
+        subclass.class_eval do
+          define_arguments do |args|
+            args.add :arg1
+          end
+        end
+        builder.expects(:required_present?).with(["123"]).at_least_once.returns(false)
+
+        assert_equal false, subclass.new(["123"]).valid?
       end
 
       def test_arguments_are_accessible_by_name
@@ -147,6 +151,10 @@ module Clog
         subclass = self.class.const_set(class_name, subclass) unless class_name.nil?
         subclass.class_eval &defn unless defn.nil?
         subclass
+      end
+
+      def clear_arguments!(command)
+        command.write_inheritable_attribute(:arguments, nil)
       end
     end
   end
