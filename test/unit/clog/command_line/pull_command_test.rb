@@ -4,10 +4,15 @@ require File.expand_path(File.join(File.dirname(__FILE__), "/base_command_test_c
 module Clog
   module CommandLine
     class PullCommandTest < BaseCommandTestCase
-      def test_not_valid_without_all_arguments
-        cmd = PullCommand.new(all_arguments[0..-2])
+      def test_valid_without_path_argument
+        arguments = all_arguments
+        arg_index = arguments.index("-d")
+        arguments.delete_at(arg_index)
+        arguments.delete_at(arg_index)
 
-        assert_equal false, cmd.valid?
+        cmd = PullCommand.new(arguments)
+
+        assert_equal true, cmd.valid?
       end
 
       def test_that_permalinkize_downcases_and_replaces_spaces_with_underscores
