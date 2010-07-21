@@ -21,8 +21,13 @@ module Clog
       recent_posts(most_recent_post_id + 1).collect { |raw_post| create_native_post(raw_post) }
     end
 
-    def create_post(post)
-      metaweblog_command('metaWeblog.newPost', create_mwb_post(post))
+    def save_post(post)
+      mwb_post = create_mwb_post(post)
+      if post.exists?
+        metaweblog_command('metaWeblog.editPost', post.id, mwb_post)
+      else
+        metaweblog_command('metaWeblog.newPost', 1, mwb_post)
+      end
     end
 
     private
@@ -90,12 +95,12 @@ module Clog
       end
     end
 
-    def metaweblog_command(command, *arguments)
-      @xmlrpc.call(command, blog_id = 1, @login, @password, *arguments)
+    def metaweblog_command(command, target_id, *arguments)
+      @xmlrpc.call(command, target_id, @login, @password, *arguments)
     end
 
     def recent_posts(count)
-      metaweblog_command('metaWeblog.getRecentPosts', count)
+      metaweblog_command('metaWeblog.getRecentPosts', 1, count)
     end
   end
 end

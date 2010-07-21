@@ -10,12 +10,12 @@ module Clog
         assert_equal false, cmd.valid?
       end
 
-      def test_that_run_creates_a_new_post
+      def test_that_run_saves_a_post
         cmd = PostCommand.new(mock("runner"), all_arguments)
         File.expects(:read).with(file_path = all_arguments.last).returns(file_data = "abc")
         Post.expects(:new).with(file_data).returns(post = mock('post'))
         cmd.expects(:client).returns(client = mock("client"))
-        client.expects(:create_post).with(post)
+        client.expects(:save_post).with(post)
 
         cmd.run
       end

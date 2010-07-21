@@ -26,6 +26,10 @@ module Clog
       end
     end
 
+    def exists?
+      !id.nil?
+    end
+
     def format
       @attributes[:format] || 'html'
     end

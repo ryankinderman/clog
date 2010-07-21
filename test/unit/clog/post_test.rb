@@ -30,6 +30,18 @@ module Clog
       assert_equal date_created.gmtime, post.date_created
     end
 
+    def test_exists_if_id_not_nil
+      post = Post.new(:id => '123')
+
+      assert_equal true, post.exists?
+    end
+
+    def test_not_exists_if_id_nil
+      post = Post.new(:id => nil)
+
+      assert_equal false, post.exists?
+    end
+
     def test_write
       post = Post.new(post_attributes = post_params)
       io = StringIO.new

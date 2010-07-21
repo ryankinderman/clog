@@ -58,12 +58,28 @@ module Clog
       Client.new({}).all_posts
     end
 
-    def test_create_post_basic_metaweblog_interface_mapping
+    def test_save_post_basic_metaweblog_interface_mapping_for_new_post
+      XMLRPC::Client.expects(:new).returns(mock_mwb_client = mock("mwb client"))
+      post = stub("stubbed post", new_post_params)
+
+      mock_mwb_client.expects(:call).with(
+        *(['metaWeblog.newPost'] + Array.new(3, anything) + [has_entries(
+          'title' => post.title,
+          'mt_convert_breaks' => post.format,
+          'mt_keywords' => post.tags,
+          'description' => post.body
+        )])
+      )
+
+      Client.new({}).save_post(post)
+    end
+
+    def test_save_post_basic_metaweblog_interface_mapping_for_existing_post
       XMLRPC::Client.expects(:new).returns(mock_mwb_client = mock("mwb client"))
       post = stub("stubbed post", post_params)
 
       mock_mwb_client.expects(:call).with(
-        *(Array.new(4, anything) + [has_entries(
+        *(['metaWeblog.editPost', post.id] + Array.new(2, anything) + [has_entries(
           'postid' => post.id,
           'link' => post.link,
           'title' => post.title,
@@ -73,10 +89,10 @@ module Clog
         )])
       )
 
-      Client.new({}).create_post(post)
+      Client.new({}).save_post(post)
     end
 
-    def test_create_post_maps_date_created
+    def test_save_post_maps_date_created
       XMLRPC::Client.expects(:new).returns(mock_mwb_client = mock("mwb client"))
       post = stub("stubbed post", post_params)
       t = post.date_created
@@ -89,10 +105,10 @@ module Clog
         )])
       )
 
-      Client.new({}).create_post(post)
+      Client.new({}).save_post(post)
     end
 
-    def test_create_post_does_not_include_date_created_if_nil_on_post
+    def test_save_post_does_not_include_date_created_if_nil_on_post
       XMLRPC::Client.expects(:new).returns(mock_mwb_client = mock("mwb client"))
       post = stub("stubbed post", post_params(:date_created => nil))
 
@@ -100,10 +116,10 @@ module Clog
         *(Array.new(4, anything) + [Not(has_key('dateCreated'))])
       )
 
-      Client.new({}).create_post(post)
+      Client.new({}).save_post(post)
     end
 
-    def test_create_post_maps_boolean_fields
+    def test_save_post_maps_boolean_fields
       XMLRPC::Client.expects(:new).returns(mock_mwb_client = mock("mwb client"))
       post = stub("stubbed post", post_params(
         :allows_pings => false,
@@ -118,17 +134,17 @@ module Clog
         )])
       )
 
-      Client.new({}).create_post(post)
+      Client.new({}).save_post(post)
     end
 
-    def test_create_post_mapping_excludes_nil_post_fields
+    def test_save_post_mapping_excludes_nil_post_fields
       XMLRPC::Client.expects(:new).returns(mock_mwb_client = mock("mwb client"))
       post = stub("stubbed post", post_params.inject({}) { |h, kv| h[kv.first] = nil; h })
 
       mock_mwb_client.expects(:call).with(
         *(Array.new(4, anything) + [{}]))
 
-      Client.new({}).create_post(post)
+      Client.new({}).save_post(post)
     end
   end
 end
