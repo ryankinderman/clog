@@ -5,13 +5,13 @@ module Clog
   module CommandLine
     class PostCommandTest < BaseCommandTestCase
       def test_not_valid_without_all_arguments
-        cmd = PostCommand.new(all_arguments[0..-2])
+        cmd = PostCommand.new(mock("runner"), all_arguments[0..-2])
 
         assert_equal false, cmd.valid?
       end
 
       def test_that_run_creates_a_new_post
-        cmd = PostCommand.new(all_arguments)
+        cmd = PostCommand.new(mock("runner"), all_arguments)
         File.expects(:read).with(file_path = all_arguments.last).returns(file_data = "abc")
         Post.expects(:new).with(file_data).returns(post = mock('post'))
         cmd.expects(:client).returns(client = mock("client"))

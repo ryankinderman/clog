@@ -1,8 +1,8 @@
 module Clog
   module CommandLine
     class UnrecognizedCommand < Command
-      def initialize(command_name)
-        super([])
+      def initialize(runner, command_name)
+        super(runner, [])
         @command_name = command_name
       end
 

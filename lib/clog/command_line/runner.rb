@@ -61,9 +61,9 @@ module Clog
         def new_command(name, args)
           command_class = commands.find { |c| c.command_name == name }
           if command_class.nil?
-            UnrecognizedCommand.new(name)
+            UnrecognizedCommand.new(self, name)
           else
-            command_class.new(args)
+            command_class.new(self, args)
           end
         end
 

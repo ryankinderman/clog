@@ -8,7 +8,7 @@ module Clog
         arguments = all_arguments
         remove_argument!("-d", arguments)
 
-        cmd = PullCommand.new(arguments)
+        cmd = PullCommand.new(mock("runner"), arguments)
 
         assert_equal true, cmd.valid?
       end
@@ -39,7 +39,7 @@ module Clog
       end
 
       def test_that_run_retrieves_all_posts_and_writes_them_to_files
-        cmd = PullCommand.new(all_arguments)
+        cmd = PullCommand.new(mock("runner"), all_arguments)
         post = stub('post',
           :id => '32',
           :title => 'This Rocks',
@@ -55,7 +55,7 @@ module Clog
       #  arguments = all_arguments
       #  remove_argument!("-d", arguments)
 
-      #  cmd = PullCommand.new(arguments)
+      #  cmd = PullCommand.new(mock("runner"), arguments)
 
       #  cmd.run
       #end

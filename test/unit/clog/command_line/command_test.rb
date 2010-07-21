@@ -61,7 +61,7 @@ module Clog
 
       def test_is_valid_if_no_additional_arguments_are_required_or_given
         subclass = create_subclass(Command)
-        assert_equal true, subclass.new(base_arguments).valid?
+        assert_equal true, subclass.new(mock("runner"), base_arguments).valid?
       end
 
       def test_provides_define_arguments_for_declarative_argument_definition
@@ -92,7 +92,7 @@ module Clog
         builder.expects(:combine).returns({})
         builder.expects(:required_present?).with(["123"]).at_least_once.returns(true)
 
-        assert_equal true, subclass.new(["123"]).valid?
+        assert_equal true, subclass.new(mock("runner"), ["123"]).valid?
       end
 
       def test_is_not_valid_if_all_required_arguments_are_not_present
@@ -107,7 +107,7 @@ module Clog
         end
         builder.expects(:required_present?).with(["123"]).at_least_once.returns(false)
 
-        assert_equal false, subclass.new(["123"]).valid?
+        assert_equal false, subclass.new(mock("runner"), ["123"]).valid?
       end
 
       def test_arguments_are_accessible_by_name
@@ -117,7 +117,7 @@ module Clog
           end
         end
 
-        assert_equal "first arg", subclass.new(base_arguments + ["first arg"]).send(:arguments)[:arg1]
+        assert_equal "first arg", subclass.new(mock("runner"), base_arguments + ["first arg"]).send(:arguments)[:arg1]
       end
 
       def test_client_lazily_initialized_from_connection_params
@@ -133,7 +133,7 @@ module Clog
         end
         Client.expects(:new).never
 
-        command = subclass.new(base_arguments.dup)
+        command = subclass.new(mock("runner"), base_arguments.dup)
 
         Client.expects(:new).with(named_arguments).returns(client = stub("client"))
 

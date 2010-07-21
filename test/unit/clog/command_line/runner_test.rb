@@ -18,7 +18,7 @@ module Clog
 
         command_args = ['command_arg']
         command_class.expects(:new).
-          with(xmlrpc_args + command_args).
+          with(Runner, xmlrpc_args + command_args).
           returns(command = mock("test command instance", :valid? => true))
         command.expects(:run)
 

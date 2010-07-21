@@ -33,9 +33,10 @@ module Clog
         args.add :password, "the password to your blog"
       end
 
-      attr_reader :error_message
+      attr_reader :error_message, :runner
 
-      def initialize(argument_values)
+      def initialize(runner, argument_values)
+        @runner = runner
         @argument_values = argument_values
         if valid?
           @connection_params = arguments.slice(:host, :xmlrpc_path, :login, :password)
