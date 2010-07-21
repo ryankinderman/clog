@@ -6,9 +6,7 @@ module Clog
     class PullCommandTest < BaseCommandTestCase
       def test_valid_without_path_argument
         arguments = all_arguments
-        arg_index = arguments.index("-d")
-        arguments.delete_at(arg_index)
-        arguments.delete_at(arg_index)
+        remove_argument!("-d", arguments)
 
         cmd = PullCommand.new(arguments)
 
@@ -53,7 +51,22 @@ module Clog
         cmd.run
       end
 
+      #def test_run_writes_post_data_to_stdout_if_no_path_is_given
+      #  arguments = all_arguments
+      #  remove_argument!("-d", arguments)
+
+      #  cmd = PullCommand.new(arguments)
+
+      #  cmd.run
+      #end
+
       private
+
+      def remove_argument!(arg_id, arguments)
+        arg_index = arguments.index(arg_id)
+        arguments.delete_at(arg_index)
+        arguments.delete_at(arg_index)
+      end
 
       def command_arguments
         ["-d", "target_path"]

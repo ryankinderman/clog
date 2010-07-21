@@ -33,6 +33,8 @@ module Clog
         args.add :password, "the password to your blog"
       end
 
+      attr_reader :error_message
+
       def initialize(argument_values)
         @argument_values = argument_values
         if valid?
@@ -45,10 +47,6 @@ module Clog
           @error_message = "Too few arguments"
         end
         @valid ||= given_enough_arguments
-      end
-
-      def error_message
-        @error_message
       end
 
       protected
