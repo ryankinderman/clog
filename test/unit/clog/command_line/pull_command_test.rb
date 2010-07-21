@@ -51,14 +51,21 @@ module Clog
         cmd.run
       end
 
-      #def test_run_writes_post_data_to_stdout_if_no_path_is_given
-      #  arguments = all_arguments
-      #  remove_argument!("-d", arguments)
+      def test_run_writes_post_data_to_stdout_if_no_path_is_given
+        arguments = all_arguments
+        remove_argument!("-d", arguments)
+        cmd = PullCommand.new(stub("runner", :stdout => (stdout = StringIO.new)), arguments)
+        post = stub('post',
+          :id => '32',
+          :title => 'This Rocks',
+          :format => "markdown")
+        cmd.expects(:client).returns(client = mock("client"))
+        client.expects(:all_posts).returns([post])
 
-      #  cmd = PullCommand.new(mock("runner"), arguments)
+        post.expects(:write).with(stdout)
 
-      #  cmd.run
-      #end
+        cmd.run
+      end
 
       private
 

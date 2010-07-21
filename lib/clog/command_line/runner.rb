@@ -65,7 +65,7 @@ module Clog
 
       end
 
-      attr_reader :stderr
+      attr_reader :stderr, :stdout
 
       def initialize(options={})
         @stderr = options[:stderr] || STDERR

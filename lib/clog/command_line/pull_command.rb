@@ -21,9 +21,13 @@ module Clog
 
       def run
         client.all_posts.each do |post|
-          file_name = self.class.post_file_name(post)
-          file_path = arguments[:path] + "/#{file_name}"
-          post.write(file_path)
+          if arguments.include?(:path)
+            file_name = self.class.post_file_name(post)
+            file_path = arguments[:path] + "/#{file_name}"
+            post.write(file_path)
+          else
+            post.write(runner.stdout)
+          end
         end
       end
     end

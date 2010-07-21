@@ -49,6 +49,18 @@ module Clog
         assert_not_nil Runner.usage
       end
 
+      def test_provides_stderr
+        runner = Runner.new(:stderr => (stderr = mock("stderr")))
+
+        assert_same stderr, runner.stderr
+      end
+
+      def test_provides_stdout
+        runner = Runner.new(:stdout => (stdout = mock("stdout")))
+
+        assert_same stdout, runner.stdout
+      end
+
       private
 
       def new_runner
