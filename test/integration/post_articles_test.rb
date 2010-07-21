@@ -2,17 +2,14 @@ require File.expand_path(File.dirname(__FILE__) + "/../test_helper")
 
 class PostArticlesTest < Test::Unit::TestCase
   def test_post_new_article
-    file = write_file(<<-EOF
-Title: #{title = 'Abc'}
-Keywords: #{keywords = 'one two three'}
-Format: #{format = 'markdown'}
-Date: #{date_created = "2010-04-05 04:20:00 GMT"}
-Pings: Off
-Comments: On
-
-#{body = "I'm the body"}
-EOF
-)
+    file = write_file(build_post_string(
+      :title => (title = 'Abc'),
+      :keywords => (keywords = 'one two three'),
+      :format => (format = 'markdown'),
+      :date => (date_created = "2010-04-05 04:20:00 GMT"),
+      :pings => "Off",
+      :comments => "On",
+      :body => (body = "I'm the body")))
 
     XMLRPC::Client.stubs(:new).returns(client = mock("xmlrpc client"))
     t = date_created.to_time

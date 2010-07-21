@@ -16,7 +16,7 @@ module Clog
       end
     end
 
-    attr_reader :raw_data, :attributes
+    attr_reader :attributes
 
     def initialize(data)
       if data.is_a?(String)
@@ -122,7 +122,7 @@ module Clog
       while !end_of_fields and i < lines.size
         line = lines[i]
 
-        if line.strip == ""
+        if line =~ /^--begin body$/
           end_of_fields = true
         else
           field_match = line.match(/^([^:]+): (.*)$/)
@@ -144,22 +144,29 @@ module Clog
         i += 1
       end
 
-      data[:body] = lines[i..-1].join("\n")
+      data[:body] = lines[i+1..-1].join("\n")
 
       data
     end
 
     def write_io(io)
-      io.puts "Link: #{link}"
-      io.puts "Post: #{id}"
-      io.puts "Title: #{title}"
-      io.puts "Keywords: #{tags}"
-      io.puts "Format: #{format}"
-      io.puts "Date: #{date_created.strftime("%Y-%m-%d %H:%M:%S GMT")}"
-      io.puts "Pings: Off"
-      io.puts "Comments: On"
-      io.puts
-      io.puts body
+      template = <<-EOS
+--begin post
+Post: #{id}
+Link: #{link}
+Title: #{title}
+Keywords: #{tags}
+Format: #{format}
+Date: #{date_created.strftime("%Y-%m-%d %H:%M:%S GMT")}
+Pings: Off
+Comments: On
+
+--begin body
+
+#{body}
+      EOS
+
+      io.puts template
     end
   end
 end

@@ -63,4 +63,18 @@ Test::Unit::TestCase.class_eval do
       login = "testuser",
       password = "testpass"] + args, :stdout => (@stdout = StringIO.new), :stderr => (@stderr = StringIO.new))
   end
+
+  def build_post_string(attributes)
+    s = "--begin post"
+    s << "\nPost: #{attributes[:id]}" if attributes.include?(:id)
+    attributes = {:format => "html"}.merge(attributes)
+    [:link, :title, :keywords, :format, :date, :pings, :comments].select do |attribute|
+      attributes.include?(attribute)
+    end.each do |attribute|
+      s << "\n#{attribute.to_s.capitalize}: #{attributes[attribute]}"
+    end
+    s << "\n\n--begin body\n\n#{attributes[:body]}\n"
+
+    s
+  end
 end
