@@ -10,20 +10,6 @@ module Clog
           @commands ||= [PullCommand, PostCommand]
         end
 
-        def run(args, options={})
-          options = {:stdout => STDOUT, :stderr => STDERR}.merge(options)
-          command = new_command(command_name = args.shift, args)
-
-          if command.valid?
-            command.run
-            true
-          else
-            options[:stderr].puts command.error_message
-            options[:stderr].puts usage
-            false
-          end
-        end
-
         def usage
           arguments = [
             ["command", "the command to run on the blog. See 'Commands' below for details."]
@@ -55,17 +41,11 @@ module Clog
           usage_str
         end
 
+        def run(args, options={})
+          new(options).run(args)
+        end
 
         private
-
-        def new_command(name, args)
-          command_class = commands.find { |c| c.command_name == name }
-          if command_class.nil?
-            UnrecognizedCommand.new(self, name)
-          else
-            command_class.new(self, args)
-          end
-        end
 
         def columnize(arguments, space_between_columns)
           column_width = space_between_columns + arguments.inject(0) { |max, pair| [max, pair.first.length].max }
@@ -83,6 +63,37 @@ module Clog
           end
         end
 
+      end
+
+      attr_reader :stderr
+
+      def initialize(options={})
+        @stderr = options[:stderr] || STDERR
+        @stdout = options[:stdout] || STDOUT
+      end
+
+      def run(args)
+        command = new_command(command_name = args.shift, args)
+
+        if command.valid?
+          command.run
+          true
+        else
+          stderr.puts command.error_message
+          stderr.puts self.class.usage
+          false
+        end
+      end
+
+      private
+
+      def new_command(name, args)
+        command_class = self.class.commands.find { |c| c.command_name == name }
+        if command_class.nil?
+          UnrecognizedCommand.new(self, name)
+        else
+          command_class.new(self, args)
+        end
       end
 
     end

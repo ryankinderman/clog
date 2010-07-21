@@ -16,15 +16,15 @@ module Clog
         xmlrpc_args = build_xmlrpc_args
         Runner.commands << (command_class = new_command_stub)
 
+        runner = new_runner
         command_args = ['command_arg']
         command_class.expects(:new).
-          with(Runner, xmlrpc_args + command_args).
+          with(runner, xmlrpc_args + command_args).
           returns(command = mock("test command instance", :valid? => true))
         command.expects(:run)
 
-        response = Runner.run(
-          [command_class.command_name] + xmlrpc_args + command_args,
-          :stderr => StringIO.new)
+        response = runner.run(
+          [command_class.command_name] + xmlrpc_args + command_args)
 
         assert_equal true, response
       end
@@ -50,6 +50,10 @@ module Clog
       end
 
       private
+
+      def new_runner
+        Runner.new(:stdout => mock("stdout"), :stderr => mock("stderr"))
+      end
 
       def new_command_stub
         stub("test command", :command_name => :test, :description => "the test command description", :arguments => [stub("test arg", :name => :arg1, :description => "some description")])
