@@ -19,14 +19,29 @@ function! s:run_command(cmd, ...)
   return temp
 endfunction
 
+function! s:padstr(str, padchr, len)
+  let numpads = max([a:len - strlen(a:str), 0])
+  let pads = ''
+
+  while numpads > 0
+    let pads = pads.a:padchr
+    let numpads = numpads - 1
+  endwhile
+
+  return pads.a:str
+endfunction
+
 function! ClogPull()
   let outfile = s:run_command(s:clog_command().' pull', 'clogpull')
   execute 'edit '.outfile
 endfunction
 
 function! ClogList()
-  let outfile = s:run_command(s:clog_command().' pull')
-  let outfile = s:run_command('cat '.outfile.' | '.
+  let tempname = tempname()
+  let articledirname = tempname.'.clogarticles'
+  call s:run_command('mkdir '.articledirname)
+  call s:run_command(s:clog_command().' pull -d '.articledirname)
+  call s:run_command('(cd '.articledirname.' && cat *)'.' | '.
     \ 'sed -n ''/^--begin post$/,/^--begin body$/ { /^$/ \! p }'' | '.
     \ 'awk ''{ '.
     \   'if($0 ~ /^--begin body/) '.
@@ -37,4 +52,5 @@ function! ClogList()
     \   'else if($0 ~ /^Link: /) {a["link"] = $0; sub(/^Link: /, "", a["link"])}'.
     \ '}''')
   execute 'edit '.outfile
+  map <buffer> <CR> :echo <SID>padstr(split(getline('.'), '\|')[1], '0', 4)<CR>
 endfunction
